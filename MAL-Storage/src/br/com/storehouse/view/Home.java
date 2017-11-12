@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.deposito.view;
+package br.com.storehouse.view;
+
+import br.com.storehouse.controller.Controller;
 
 /**
  *
@@ -14,7 +16,9 @@ public class Home extends javax.swing.JFrame {
     /**
      * Creates new form Home
      */
+    private Controller ctrl;
     public Home() {
+        ctrl = new Controller();
         initComponents();
     }
 
@@ -27,21 +31,77 @@ public class Home extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        btnAddMerc = new javax.swing.JButton();
+        btnUpdateMerc = new javax.swing.JButton();
+        btnRmvMerc = new javax.swing.JButton();
+        btnListarMerc = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel1.setText("Depósito - Magazine Ana Luíza");
+
+        jPanel1.setLayout(new java.awt.GridLayout(2, 2));
+
+        btnAddMerc.setText("Adicionar Mercadoria");
+        btnAddMerc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddMercActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnAddMerc);
+
+        btnUpdateMerc.setText("Alterar Mercadoria");
+        jPanel1.add(btnUpdateMerc);
+
+        btnRmvMerc.setText("Remover Mercadoria");
+        jPanel1.add(btnRmvMerc);
+
+        btnListarMerc.setText("Listar Mercadorias");
+        btnListarMerc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnListarMercActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnListarMerc);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAddMercActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddMercActionPerformed
+        AddProduct ap = new AddProduct(this, true, ctrl);
+        ap.setVisible(true);
+    }//GEN-LAST:event_btnAddMercActionPerformed
+
+    private void btnListarMercActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarMercActionPerformed
+        ListProduct lp = new ListProduct(this, true, ctrl);
+        lp.setVisible(true);
+    }//GEN-LAST:event_btnListarMercActionPerformed
 
     /**
      * @param args the command line arguments
@@ -79,5 +139,11 @@ public class Home extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddMerc;
+    private javax.swing.JButton btnListarMerc;
+    private javax.swing.JButton btnRmvMerc;
+    private javax.swing.JButton btnUpdateMerc;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
