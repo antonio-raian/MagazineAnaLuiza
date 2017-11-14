@@ -72,16 +72,6 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddMercActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btnUpdateMerc">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Alterar Mercadoria"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnRmvMerc">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Remover Mercadoria"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JButton" name="btnListarMerc">
           <Properties>
             <Property name="text" type="java.lang.String" value="Listar Mercadorias"/>

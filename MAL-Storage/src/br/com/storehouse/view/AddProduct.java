@@ -223,7 +223,7 @@ public class AddProduct extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(null, "Algum campo está vazio, favor verificar!");
             }
         } catch (IOException ex) {
-            Logger.getLogger(AddProduct.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Não foi possível conectar-se a base de dados!");
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 

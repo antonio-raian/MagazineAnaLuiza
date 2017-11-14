@@ -39,8 +39,6 @@ public class Home extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         btnAddMerc = new javax.swing.JButton();
-        btnUpdateMerc = new javax.swing.JButton();
-        btnRmvMerc = new javax.swing.JButton();
         btnListarMerc = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -57,12 +55,6 @@ public class Home extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnAddMerc);
-
-        btnUpdateMerc.setText("Alterar Mercadoria");
-        jPanel1.add(btnUpdateMerc);
-
-        btnRmvMerc.setText("Remover Mercadoria");
-        jPanel1.add(btnRmvMerc);
 
         btnListarMerc.setText("Listar Mercadorias");
         btnListarMerc.addActionListener(new java.awt.event.ActionListener() {
@@ -152,8 +144,6 @@ public class Home extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddMerc;
     private javax.swing.JButton btnListarMerc;
-    private javax.swing.JButton btnRmvMerc;
-    private javax.swing.JButton btnUpdateMerc;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables

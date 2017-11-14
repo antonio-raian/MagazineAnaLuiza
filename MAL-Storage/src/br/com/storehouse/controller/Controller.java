@@ -49,7 +49,7 @@ public class Controller {
         return false;
     }
     
-    public boolean updateProduct(String cod, String name, String details, String producer, String kind, int quantity) throws IOException{
+    public boolean updateProduct(String cod, String name, String details, String producer, String kind, int quantity, double value) throws IOException{
         Product prod = findProduct(cod);
         if(prod!=null){
             prod.setCod(cod);

@@ -30,7 +30,7 @@ public class ListProduct extends javax.swing.JDialog {
         super(aThis, b);
         this.ctrl = ctrl;
         initComponents();
-        carregaDados();
+        searchData();
     }
 
     /**
@@ -114,7 +114,8 @@ public class ListProduct extends javax.swing.JDialog {
             String cod = (String) tableProducts.getValueAt(row, 0);
             DetailsProduct dp = new DetailsProduct(this, true, ctrl, cod);
             dp.setVisible(true);
-        }        
+        }
+        searchData();
     }//GEN-LAST:event_tableProductsMouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -174,7 +175,7 @@ public class ListProduct extends javax.swing.JDialog {
 
 
     //Metodo usado para recuperar os dados dos pacientes em risco e coloca-los na tela
-    private void carregaDados(){
+    private void searchData(){
         LinkedList<String> str = ctrl.listProducts();
         products = new DefaultTableModel();
         products.addColumn("Código");

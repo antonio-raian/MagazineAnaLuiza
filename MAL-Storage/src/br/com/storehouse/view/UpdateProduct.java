@@ -5,35 +5,18 @@
  */
 package br.com.storehouse.view;
 
-import br.com.storehouse.controller.Controller;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-
 /**
  *
  * @author Antonio Raian
  */
-public class DetailsProduct extends javax.swing.JDialog {
+public class UpdateProduct extends javax.swing.JDialog {
 
-    private Controller ctrl;
-    private String code;
     /**
-     * Creates new form DetailsProduct
+     * Creates new form UpdateProduct
      */
-    public DetailsProduct(java.awt.Frame parent, boolean modal) {
+    public UpdateProduct(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        init();
-    }
-
-    DetailsProduct(ListProduct aThis, boolean b, Controller ctrl, String cod) {
-        super (aThis, b);
-        this.ctrl = ctrl;
-        code = cod;
-        initComponents();
-        init();
     }
 
     /**
@@ -63,14 +46,13 @@ public class DetailsProduct extends javax.swing.JDialog {
         jLabel8 = new javax.swing.JLabel();
         txtValue = new javax.swing.JFormattedTextField();
         jPanel2 = new javax.swing.JPanel();
-        btnAlterar = new javax.swing.JButton();
-        btnRemover = new javax.swing.JButton();
-        btnFechar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        bntCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel1.setText("Detalhes do Produto");
+        jLabel1.setText("Alterar Produto");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Código:");
@@ -90,27 +72,16 @@ public class DetailsProduct extends javax.swing.JDialog {
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel7.setText("Descrição:");
 
-        txtCod.setEnabled(false);
-
-        txtName.setEnabled(false);
-
-        txtProducer.setEnabled(false);
-
-        txtKind.setEnabled(false);
-
         txtQtde.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        txtQtde.setEnabled(false);
 
         txtDescription.setColumns(20);
         txtDescription.setRows(5);
-        txtDescription.setEnabled(false);
         jScrollPane1.setViewportView(txtDescription);
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel8.setText("Valor Unitário:");
 
         txtValue.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        txtValue.setEnabled(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -175,45 +146,37 @@ public class DetailsProduct extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setLayout(new java.awt.GridLayout(1, 0));
+        jPanel2.setLayout(new java.awt.GridLayout(1, 0, 1, 0));
 
-        btnAlterar.setText("Alterar");
-        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setText("Salvar");
+        jPanel2.add(jButton1);
+
+        bntCancel.setText("Cancelar");
+        bntCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAlterarActionPerformed(evt);
+                bntCancelActionPerformed(evt);
             }
         });
-        jPanel2.add(btnAlterar);
-
-        btnRemover.setText("Remover");
-        btnRemover.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRemoverActionPerformed(evt);
-            }
-        });
-        jPanel2.add(btnRemover);
-
-        btnFechar.setText("Fechar");
-        btnFechar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFecharActionPerformed(evt);
-            }
-        });
-        jPanel2.add(btnFechar);
+        jPanel2.add(bntCancel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -222,58 +185,18 @@ public class DetailsProduct extends javax.swing.JDialog {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
+    private void bntCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntCancelActionPerformed
         setVisible(false);
         dispose();
-    }//GEN-LAST:event_btnFecharActionPerformed
-
-    private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
-        if(txtCod.isEnabled()){
-            int quantity =0;double value = 0;
-            if(!txtQtde.getText().equals(""))
-                quantity = Integer.parseInt(txtQtde.getText());
-
-            if(!txtValue.getText().equals(""))            
-                value = Double.parseDouble(txtValue.getText().replace(",", "."));
-            
-            try {
-                ctrl.updateProduct(txtCod.getText(), txtName.getText(), txtDescription.getText(), txtProducer.getText() , txtKind.getText(), quantity, value);
-                setVisible(false);
-                dispose();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "Não foi possível conectar-se a base de dados!");
-            }
-        }else{
-            txtCod.setEnabled(true);
-            txtDescription.setEnabled(true);
-            txtKind.setEnabled(true);
-            txtName.setEnabled(true);
-            txtProducer.setEnabled(true);
-            txtQtde.setEnabled(true);
-            txtValue.setEnabled(true);
-        }
-    }//GEN-LAST:event_btnAlterarActionPerformed
-
-    private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
-        int option = JOptionPane.showConfirmDialog(null, "Deseja realmente remover o produto: "+txtCod.getText()+" "+txtName.getText()+" "+txtDescription.getText());
-        if(option==0){
-            try {
-                ctrl.removeProduct(code);
-                setVisible(false);
-                dispose();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "Não foi possível conectar-se a base de dados!");
-            }
-        }
-    }//GEN-LAST:event_btnRemoverActionPerformed
+    }//GEN-LAST:event_bntCancelActionPerformed
 
     /**
      * @param args the command line arguments
@@ -292,20 +215,20 @@ public class DetailsProduct extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DetailsProduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateProduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DetailsProduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateProduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DetailsProduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateProduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DetailsProduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateProduct.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                DetailsProduct dialog = new DetailsProduct(new javax.swing.JFrame(), true);
+                UpdateProduct dialog = new UpdateProduct(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -318,9 +241,8 @@ public class DetailsProduct extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAlterar;
-    private javax.swing.JButton btnFechar;
-    private javax.swing.JButton btnRemover;
+    private javax.swing.JButton bntCancel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -340,20 +262,4 @@ public class DetailsProduct extends javax.swing.JDialog {
     private javax.swing.JFormattedTextField txtQtde;
     private javax.swing.JFormattedTextField txtValue;
     // End of variables declaration//GEN-END:variables
-
-    private void init() {
-        String s = ctrl.findByCod(code);
-        if(s!=null){
-            String[] aux = s.split(";");
-            txtCod.setText(aux[0]);
-            txtName.setText(aux[1]);
-            txtDescription.setText(aux[2]);
-            txtProducer.setText(aux[3]);
-            txtKind.setText(aux[4]);
-            txtQtde.setText(aux[5]);
-            txtValue.setText(aux[6]);
-        }else{
-            JOptionPane.showConfirmDialog(null, "Produto não encontrado!");
-        }
-    }
 }
