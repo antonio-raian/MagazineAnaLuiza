@@ -5,11 +5,13 @@
  */
 package br.com.storehouse.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Antonio Raian
  */
-public class Product {
+public class Product implements Serializable{
     private String cod, name, details, producer, kind;
     private int quantiy;
     private double value;
@@ -90,6 +92,6 @@ public class Product {
 
     @Override
     public String toString() {
-        return cod + "-" + name + "-" + details + "-" + producer + "-" + kind + "-" + quantiy + "-" +value;
+        return cod + ";" + name + ";" + details + ";" + producer + ";" + kind + ";" + quantiy + ";" +value;
     }
 }

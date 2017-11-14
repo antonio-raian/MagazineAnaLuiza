@@ -6,6 +6,9 @@
 package br.com.storehouse.view;
 
 import br.com.storehouse.controller.Controller;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -211,12 +214,16 @@ public class AddProduct extends javax.swing.JDialog {
         if(!txtValue.getText().equals(""))            
             value = Double.parseDouble(txtValue.getText().replace(",", "."));
         
-        if(ctrl.addProduct(txtCod.getText(), txtName.getText(), txtDescription.getText(), txtProducer.getText(), txtKind.getText(), quantity, value)){
-            JOptionPane.showMessageDialog(null, "Objeto Cadastrado com sucesso!");
-            setVisible(false);
-            dispose();
-        }else{
-            JOptionPane.showMessageDialog(null, "Algum campo está vazio, favor verificar!");
+        try {
+            if(ctrl.addProduct(txtCod.getText(), txtName.getText(), txtDescription.getText(), txtProducer.getText(), txtKind.getText(), quantity, value)){
+                JOptionPane.showMessageDialog(null, "Objeto Cadastrado com sucesso!");
+                setVisible(false);
+                dispose();
+            }else{
+                JOptionPane.showMessageDialog(null, "Algum campo está vazio, favor verificar!");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(AddProduct.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 

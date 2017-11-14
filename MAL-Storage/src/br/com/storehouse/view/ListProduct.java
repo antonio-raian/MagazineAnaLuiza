@@ -182,7 +182,7 @@ public class ListProduct extends javax.swing.JDialog {
         products.addColumn("Valor");
         products.addColumn("Quantidade");
         for(String s:str){
-            String[] aux = s.split("-");
+            String[] aux = s.split(";");
             products.addRow(new Object[]{aux[0],aux[1],aux[6],aux[5]});//E armazena no objeto do TABELA
         }
         tableProducts.setModel(products);

@@ -280,7 +280,7 @@ public class DetailsProduct extends javax.swing.JDialog {
     private void init() {
         String s = ctrl.findByCod(code);
         if(s!=null){
-            String[] aux = s.split("-");
+            String[] aux = s.split(";");
             txtCod.setText(aux[0]);
             txtName.setText(aux[1]);
             txtDescription.setText(aux[2]);

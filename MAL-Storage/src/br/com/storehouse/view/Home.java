@@ -6,6 +6,10 @@
 package br.com.storehouse.view;
 
 import br.com.storehouse.controller.Controller;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -17,9 +21,10 @@ public class Home extends javax.swing.JFrame {
      * Creates new form Home
      */
     private Controller ctrl;
-    public Home() {
+    public Home() throws ClassNotFoundException, IOException {
         ctrl = new Controller();
         initComponents();
+        
     }
 
     /**
@@ -133,7 +138,13 @@ public class Home extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Home().setVisible(true);
+                try {
+                    new Home().setVisible(true);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Não foi possível conectar a base de dados!");
+                } catch (ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(null, "Não foi possível conectar a base de dados!");
+                }
             }
         });
     }
