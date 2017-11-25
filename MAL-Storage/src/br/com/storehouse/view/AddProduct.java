@@ -5,10 +5,9 @@
  */
 package br.com.storehouse.view;
 
+import br.com.storehouse.connection.Connection;
 import br.com.storehouse.controller.Controller;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,14 +20,16 @@ public class AddProduct extends javax.swing.JDialog {
      * Creates new form AddProduct
      */
     private Controller ctrl;
+    private Connection connection;
     public AddProduct(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
 
-    public AddProduct(java.awt.Frame aThis, boolean b, Controller ctrl) {
+    public AddProduct(java.awt.Frame aThis, boolean b, Controller ctrl, Connection connection) {
         super (aThis, b);
         this.ctrl = ctrl;
+        this.connection = connection;
         initComponents();
     }
 
@@ -215,8 +216,13 @@ public class AddProduct extends javax.swing.JDialog {
             value = Double.parseDouble(txtValue.getText().replace(",", "."));
         
         try {
-            if(ctrl.addProduct(txtCod.getText(), txtName.getText(), txtDescription.getText(), txtProducer.getText(), txtKind.getText(), quantity, value)){
-                JOptionPane.showMessageDialog(null, "Objeto Cadastrado com sucesso!");
+            String resp = ctrl.addProduct(txtCod.getText(), txtName.getText(), txtDescription.getText(), txtProducer.getText(), txtKind.getText(), quantity, value);
+            connection.newItem(resp);
+            if(resp!=null){
+                if(resp.equals("0"))
+                    JOptionPane.showMessageDialog(null, "Produto já cadastrado, tente atualizar!");
+                else
+                    JOptionPane.showMessageDialog(null, "Objeto Cadastrado com sucesso!");
                 setVisible(false);
                 dispose();
             }else{

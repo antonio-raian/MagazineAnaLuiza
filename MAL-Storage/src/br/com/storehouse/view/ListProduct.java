@@ -176,13 +176,13 @@ public class ListProduct extends javax.swing.JDialog {
 
     //Metodo usado para recuperar os dados dos pacientes em risco e coloca-los na tela
     private void searchData(){
-        LinkedList<String> str = ctrl.listProducts();
+        LinkedList<String> list = ctrl.listProducts();
         products = new DefaultTableModel();
         products.addColumn("Código");
         products.addColumn("Nome");
         products.addColumn("Valor");
         products.addColumn("Quantidade");
-        for(String s:str){
+        for(String s:list){
             String[] aux = s.split(";");
             products.addRow(new Object[]{aux[0],aux[1],aux[6],aux[5]});//E armazena no objeto do TABELA
         }

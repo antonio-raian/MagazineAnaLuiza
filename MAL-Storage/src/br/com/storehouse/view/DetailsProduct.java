@@ -7,8 +7,6 @@ package br.com.storehouse.view;
 
 import br.com.storehouse.controller.Controller;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
