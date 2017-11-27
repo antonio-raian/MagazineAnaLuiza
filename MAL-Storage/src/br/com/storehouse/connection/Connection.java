@@ -58,12 +58,13 @@ public class Connection {
         storageSocket.send(sendDP);
     }
 
-    public void getLog(int logSize) throws IOException {
+    public String getLog(int logSize) throws IOException {
         String s = "STORAGE#GETLOG#"+logSize;
         DatagramPacket sendDP = new DatagramPacket(s.getBytes(), s.getBytes().length, InetAddress.getByName(storageGroup), storagePort);
         serversSocket.send(sendDP);
-        DatagramPacket receive = new DatagramPacket(this.receive, this.receive.length);
-        serversSocket.receive(receive);
+        DatagramPacket receiveDP = new DatagramPacket(this.receive, this.receive.length);
+        serversSocket.receive(receiveDP);
         System.out.println("recebeu");
+        return new String(receiveDP.getData());
     }
 }

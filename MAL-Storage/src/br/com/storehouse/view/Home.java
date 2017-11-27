@@ -29,10 +29,9 @@ public class Home extends javax.swing.JFrame {
      */
     private Controller ctrl;
     private Connection connection;
-    private static int number = 0;
+    private String number = "";
     public Home() throws ClassNotFoundException, IOException {
-        number++;
-        //init();
+        init();
         initComponents();
         post();
     }
@@ -143,9 +142,12 @@ public class Home extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         try {
-            ctrl = new Controller(number+"", txtCoordinateX.getText(), txtCoordinateY.getText());
+            ctrl = new Controller(number, txtCoordinateX.getText(), txtCoordinateY.getText());
             connection = new Connection();
-            connection.getLog(ctrl.getLogSize());
+            String resp = connection.getLog(ctrl.getLogSize());
+            if(ctrl.verifyLog(resp)){
+                JOptionPane.showMessageDialog(null, "Deposito Atualizado!");
+            }
             ServerUDP sudp = new ServerUDP(ctrl);
             btnAddMerc.setEnabled(true);
             btnListarMerc.setEnabled(true);
@@ -211,13 +213,12 @@ public class Home extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     
     private void init() throws IOException, ClassNotFoundException{
-        number++;
-//        while("".equals(number)){
-//            number = JOptionPane.showInputDialog("Qual é o numero desse Depósito?");
-//        }
-//        if(number==null){
-//            throw new ClosedByInterruptException();
-//        } 
+        while("".equals(number)){
+            number = JOptionPane.showInputDialog("Qual é o numero desse Depósito?");
+        }
+        if(number==null){
+            throw new ClosedByInterruptException();
+        } 
     }
 
     private void post() throws FileNotFoundException, IOException {

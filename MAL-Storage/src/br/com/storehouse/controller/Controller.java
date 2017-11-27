@@ -192,7 +192,7 @@ public class Controller {
     
     //Metodo que salva o log
     public void saveLog(String mensage) throws IOException{    
-        String str = log.size()+"!"+mensage;
+        String str = (log.size()+1)+"!"+mensage+"§";
         log.add(str);
         saveData(fileNameLog, str);
     }
@@ -202,26 +202,27 @@ public class Controller {
     public String getLog (int last){
         String list = "";
         for(String s:log){
-            String[] aux = s.split("!");
-            int num = Integer.parseInt(aux[0]);
-            if(num>last){
+            if(log.size()>last){
                 list+=s;
             }
         }
         return list;
     }
     
-    public boolean verifyLog(LinkedList<String> log) throws IOException{        
-        int size = this.log.size();
-            for(String s:log){
-                String[] aux = s.split("!");
-                if(size>Integer.parseInt(aux[0])){
-                    log.remove(s);
-                }else{
-                    break;
+    public boolean verifyLog(String log) throws IOException{        
+        LinkedList<String> list = new LinkedList<>();
+        if(!log.equals("")){
+            String[] aux = log.split("§");
+            int size = this.log.size();
+                for(int i=0;i<aux.length-1;i++){
+                    String[] aux2 = aux[i].split("!");
+                    if(size<Integer.parseInt(aux2[0])){
+                        list.add(aux2[1]);
+                    }
                 }
-            }
-        return becomeConsistent(log);
+            return becomeConsistent(list);
+        }
+        return false;
     }
 
     private boolean becomeConsistent(LinkedList<String> log) throws IOException {
