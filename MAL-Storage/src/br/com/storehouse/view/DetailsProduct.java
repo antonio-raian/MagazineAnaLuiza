@@ -5,7 +5,7 @@
  */
 package br.com.storehouse.view;
 
-import br.com.storehouse.controller.Controller;
+import br.com.storehouse.controller.ControllerStorage;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 
@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class DetailsProduct extends javax.swing.JDialog {
 
-    private Controller ctrl;
+    private ControllerStorage ctrl;
     private String code;
     /**
      * Creates new form DetailsProduct
@@ -26,7 +26,7 @@ public class DetailsProduct extends javax.swing.JDialog {
         init();
     }
 
-    DetailsProduct(ListProduct aThis, boolean b, Controller ctrl, String cod) {
+    DetailsProduct(ListProduct aThis, boolean b, ControllerStorage ctrl, String cod) {
         super (aThis, b);
         this.ctrl = ctrl;
         code = cod;

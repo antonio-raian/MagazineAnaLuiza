@@ -5,15 +5,15 @@
  */
 package br.com.storehouse.view;
 
-import br.com.storehouse.connection.Connection;
+import br.com.storehouse.connection.ConnectionStorage;
 import br.com.storehouse.connection.ServerUDP;
-import br.com.storehouse.controller.Controller;
+import br.com.storehouse.controller.ControllerStorage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.channels.ClosedByInterruptException;
+import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -22,16 +22,15 @@ import javax.swing.JOptionPane;
  *
  * @author Antonio Raian
  */
-public class Home extends javax.swing.JFrame {
+public class HomeStorage extends javax.swing.JFrame {
 
     /**
-     * Creates new form Home
+     * Creates new form HomeStorage
      */
-    private Controller ctrl;
-    private Connection connection;
-    private String number = "";
-    public Home() throws ClassNotFoundException, IOException {
-        init();
+    private ControllerStorage ctrl;
+    private ConnectionStorage connection;
+    //private String number = "";
+    public HomeStorage() throws ClassNotFoundException, IOException {
         initComponents();
         post();
     }
@@ -142,19 +141,22 @@ public class Home extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         try {
-            ctrl = new Controller(number, txtCoordinateX.getText(), txtCoordinateY.getText());
-            connection = new Connection();
-            String resp = connection.getLog(ctrl.getLogSize());
+            ctrl = new ControllerStorage(InetAddress.getLocalHost().getHostAddress(), txtCoordinateX.getText(), txtCoordinateY.getText());
+            connection = new ConnectionStorage();
+            String resp = "Socket TimeOut";
+            int i =0;
+            while (resp.equals("Socket TimeOut")&&i<5){
+                resp = connection.getLog(ctrl.getLogSize());
+                i++;
+            }
             if(ctrl.verifyLog(resp)){
                 JOptionPane.showMessageDialog(null, "Deposito Atualizado!");
             }
             ServerUDP sudp = new ServerUDP(ctrl);
             btnAddMerc.setEnabled(true);
             btnListarMerc.setEnabled(true);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | IOException ex) {
+            Logger.getLogger(HomeStorage.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnConnectActionPerformed
 
@@ -175,21 +177,22 @@ public class Home extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HomeStorage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HomeStorage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HomeStorage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HomeStorage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new Home().setVisible(true);
+                    new HomeStorage().setVisible(true);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null, "Erro:"+ex.getMessage());
                 } catch (ClassNotFoundException ex) {
@@ -212,25 +215,24 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JTextField txtCoordinateY;
     // End of variables declaration//GEN-END:variables
     
-    private void init() throws IOException, ClassNotFoundException{
-        while("".equals(number)){
-            number = JOptionPane.showInputDialog("Qual é o numero desse Depósito?");
-        }
-        if(number==null){
-            throw new ClosedByInterruptException();
-        } 
-    }
+//    private void init() throws IOException, ClassNotFoundException{
+//        while("".equals(number)){
+//            number = JOptionPane.showInputDialog("Qual é o numero desse Depósito?");
+//        }
+//        if(number==null){
+//            throw new ClosedByInterruptException();
+//        } 
+//    }
 
     private void post() throws FileNotFoundException, IOException {
-        jLabel1.setText("Depósito "+number+" - Magazine Ana Luíza");
-        File arq = new File(".\\Files\\Products_"+number+".txt");
+        File arq = new File("./StorageFiles/Products_"+InetAddress.getLocalHost().getHostAddress()+".txt");
         if(arq.exists())
             try (BufferedReader buffRead = new BufferedReader(new FileReader(arq))) {
                 String line = buffRead.readLine();
                 if(line!=null){
                     String[] aux = line.split(":");
-                    txtCoordinateX.setText(aux[0]);
-                    txtCoordinateY.setText(aux[1]);
+                    txtCoordinateX.setText(aux[1]);
+                    txtCoordinateY.setText(aux[2]);
                     txtCoordinateX.setEnabled(false);
                     txtCoordinateY.setEnabled(false);
                 }
@@ -238,5 +240,4 @@ public class Home extends javax.swing.JFrame {
         btnAddMerc.setEnabled(false);
         btnListarMerc.setEnabled(false);
     }
-
 }

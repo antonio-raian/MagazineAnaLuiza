@@ -5,8 +5,8 @@
  */
 package br.com.storehouse.view;
 
-import br.com.storehouse.connection.Connection;
-import br.com.storehouse.controller.Controller;
+import br.com.storehouse.connection.ConnectionStorage;
+import br.com.storehouse.controller.ControllerStorage;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 
@@ -19,14 +19,14 @@ public class AddProduct extends javax.swing.JDialog {
     /**
      * Creates new form AddProduct
      */
-    private Controller ctrl;
-    private Connection connection;
+    private ControllerStorage ctrl;
+    private ConnectionStorage connection;
     public AddProduct(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
 
-    public AddProduct(java.awt.Frame aThis, boolean b, Controller ctrl, Connection connection) {
+    public AddProduct(java.awt.Frame aThis, boolean b, ControllerStorage ctrl, ConnectionStorage connection) {
         super (aThis, b);
         this.ctrl = ctrl;
         this.connection = connection;

@@ -5,7 +5,8 @@
  */
 package br.com.client.view;
 
-import br.com.client.connection.Connection;
+import br.com.client.connection.ConnectionClient;
+import java.io.IOException;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,7 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class Register extends javax.swing.JDialog {
 
-    private Connection connection;
+    private ConnectionClient connection;
     /**
      * Creates new form Register
      */
@@ -23,10 +24,17 @@ public class Register extends javax.swing.JDialog {
         initComponents();
     }
     
-    public Register(Home parent, boolean modal, Connection connection) {
+    public Register(HomeClient parent, boolean modal, ConnectionClient connection) {
         super(parent, modal);
         this.connection = connection;
         initComponents();
+    }
+
+    Register(HomeClient parent, boolean modal, ConnectionClient connection, String login) {
+        super(parent, modal);
+        this.connection = connection;
+        initComponents();
+        txtUserName.setText(login);
     }
 
     /**
@@ -149,14 +157,20 @@ public class Register extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        String resp = connection.register(txtName.getText(), txtUserName.getText(), txtPasswd.getText());
-        if(resp.equals("SUCCESS")){
-            JOptionPane.showMessageDialog(null, "Cliente Cadastrado com sucesso");
-            dispose();
-            setVisible(false);
-        }else if (resp.equals("LOGINEXISTENT")){
-            JOptionPane.showMessageDialog(null, "O login solicidado já existe no nosso sistema");
+        String resp;
+        try {
+            resp = connection.register(txtName.getText(), txtUserName.getText(), txtPasswd.getText());
+            if(resp.equals("SUCCESS")){
+                JOptionPane.showMessageDialog(null, "Cliente Cadastrado com sucesso");
+                dispose();
+                setVisible(false);
+            }else if (resp.equals("LOGINEXISTENT")){
+                JOptionPane.showMessageDialog(null, "O login solicidado já existe no nosso sistema");
+            }
+        }catch (IOException | ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, "Não foi possível comunicar com o servidor!");
         }
+       
     }//GEN-LAST:event_btnSaveActionPerformed
 
     /**

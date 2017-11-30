@@ -5,7 +5,7 @@
  */
 package br.com.server.connection;
 
-import br.com.server.control.Controller;
+import br.com.server.control.ControllerServer;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -20,12 +20,12 @@ import java.net.SocketException;
 public class ServerUDP implements Runnable{
     private final MulticastSocket server; //atributo responsável por estabelecer a conexão UDP
     private final byte[] receive = new byte[2048];//Array para receber a informação da conexão
-    private final Controller ctrl; //Atributo que recebe o controlador
+    private final ControllerServer ctrl; //Atributo que recebe o controlador
     private final int port = 8090;
     private final String ipGroup = "235.2.2.2";
 
     //Construtor 
-    public ServerUDP(Controller ctrl) throws SocketException, IOException {
+    public ServerUDP(ControllerServer ctrl) throws SocketException, IOException {
         server = new MulticastSocket(this.port);//Abre uma coneão UDP para uma determinada porta
         server.joinGroup(InetAddress.getByName(ipGroup));
         this.ctrl = ctrl;

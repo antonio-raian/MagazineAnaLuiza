@@ -9,13 +9,15 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.UnknownHostException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 /**
  *
  * @author Antonio Raian
  */
-public class Connection {
+public class ConnectionStorage {
+    private String address;
     private final int serversPort = 8090;
     private final String serversGroup = "235.2.2.2";
     private MulticastSocket serversSocket;
@@ -25,14 +27,15 @@ public class Connection {
     
     private byte[] receive = new byte[2048];
 
-    public Connection() throws IOException {
+    public ConnectionStorage() throws IOException {
+        address = InetAddress.getLocalHost().getHostAddress();
         serversSocket = new MulticastSocket();
         storageSocket = new MulticastSocket(storagePort);
         storageSocket.joinGroup(InetAddress.getByName(storageGroup));
     }
     
     public void newItem(String item) throws IOException{
-        String s = "STORAGE#NEWITEM#"+item;
+        String s = "STORAGE#NEWITEM#"+item+"#"+address;
         DatagramPacket sendDP = new DatagramPacket(s.getBytes(), s.getBytes().length, InetAddress.getByName(serversGroup), serversPort);
         serversSocket.send(sendDP);
         sendDP.setAddress(InetAddress.getByName(storageGroup));
@@ -41,7 +44,7 @@ public class Connection {
     }
 
     public void updateItem(String item) throws IOException {
-        String s = "STORAGE#UPDATEITEM#"+item;
+        String s = "STORAGE#UPDATEITEM#"+item+"#"+address;
         DatagramPacket sendDP = new DatagramPacket(s.getBytes(), s.getBytes().length, InetAddress.getByName(serversGroup), serversPort);
         serversSocket.send(sendDP);
         sendDP.setAddress(InetAddress.getByName(storageGroup));
@@ -50,7 +53,7 @@ public class Connection {
     }
 
     public void deleteItem(String cod) throws IOException {
-        String s = "STORAGE#DELETEITEM#"+cod+";";
+        String s = "STORAGE#DELETEITEM#"+cod+"#"+address;
         DatagramPacket sendDP = new DatagramPacket(s.getBytes(), s.getBytes().length, InetAddress.getByName(serversGroup), serversPort);
         serversSocket.send(sendDP);
         sendDP.setAddress(InetAddress.getByName(storageGroup));
@@ -63,7 +66,12 @@ public class Connection {
         DatagramPacket sendDP = new DatagramPacket(s.getBytes(), s.getBytes().length, InetAddress.getByName(storageGroup), storagePort);
         serversSocket.send(sendDP);
         DatagramPacket receiveDP = new DatagramPacket(this.receive, this.receive.length);
-        serversSocket.receive(receiveDP);
+        serversSocket.setSoTimeout(3000);
+        try{            
+            serversSocket.receive(receiveDP);
+        }catch (SocketException | SocketTimeoutException ex){
+            return "Socket TimeOut";
+        }        
         System.out.println("recebeu");
         return new String(receiveDP.getData());
     }

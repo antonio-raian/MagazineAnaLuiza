@@ -18,30 +18,30 @@ import java.util.LinkedList;
  *
  * @author Antonio Raian
  */
-public class Controller {
+public class ControllerStorage {
 
     private LinkedList<Product> products;
     private LinkedList<String> log;
-    private File path = new File("Files");
+    private File path = new File("StorageFiles");
     private final String fileName, fileNameLog;
     private int coordinateX, coordinateY;
     
-    public Controller(String number, String coordinateX, String coordinateY) throws ClassNotFoundException, IOException {
+    public ControllerStorage(String address, String coordinateX, String coordinateY) throws ClassNotFoundException, IOException {
         products = new LinkedList<>();
         log = new LinkedList<>();
         this.coordinateX = Integer.parseInt(coordinateX);
         this.coordinateY = Integer.parseInt(coordinateY);
         
         path.mkdir();
-        fileName = "Products_"+number+".txt";
-        fileNameLog = "LOG_STORE_"+number+".txt";
-        File arqProducts = new File(path,fileName);      
+        fileName = "Products_"+address+".txt";
+        fileNameLog = "LOG_STORE_"+address+".txt";
+        File arqProducts = new File(path,fileName);
         
         File arqLog = new File(path, fileNameLog);
         System.out.println(arqProducts.length());
         if(!arqProducts.exists()){
             arqProducts.createNewFile();
-            saveData(fileName, this.coordinateX+":"+this.coordinateY);
+            saveData(fileName, address+":"+this.coordinateX+":"+this.coordinateY);
         }
         products = readFile(arqProducts, 0);
             
@@ -196,9 +196,11 @@ public class Controller {
         log.add(str);
         saveData(fileNameLog, str);
     }
+    
     public int getLogSize(){
         return log.size();
     }
+    
     public String getLog (int last){
         String list = "";
         for(String s:log){

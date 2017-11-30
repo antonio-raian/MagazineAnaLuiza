@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.server.connection;
+package br.com.client.connection;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,27 +11,22 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
 
 /**
  *
  * @author Antonio Raian
  */
-public class ConnectionServer {
+public class ConnectionClient {
     private Socket server;
     private InetAddress addressDistributor;
-    private InetAddress addressStorages;
-    private InetAddress addressServers;
+    private InetAddress addressServer;
     private int portDistributor;
-    private int portStorages;
-    private int portServers;
+    private int portServer;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-
-    public ConnectionServer(){
-        
-    }
     
-    public void setInfos(String address, String port) throws UnknownHostException {
+    public void setDistributor(String address, String port) throws UnknownHostException {
         this.addressDistributor = InetAddress.getByName(address);
         this.portDistributor = Integer.parseInt(port);
     }
@@ -41,13 +36,8 @@ public class ConnectionServer {
         out = new ObjectOutputStream(server.getOutputStream());
     }
     
-    public void connectStorages() throws IOException{
-        server = new Socket(addressStorages, portStorages);
-        out = new ObjectOutputStream(server.getOutputStream());
-    }
-    
-    public void connectServers() throws IOException{
-        server = new Socket(addressServers, portServers);
+    public void connectServer() throws IOException{
+        server = new Socket(addressServer, portServer);
         out = new ObjectOutputStream(server.getOutputStream());
     }
     
@@ -57,52 +47,53 @@ public class ConnectionServer {
         server.close();
     }
 
-    public String newServerConnection(String address, String port) throws UnknownHostException, IOException, ClassNotFoundException{
+    public String newConnection() throws UnknownHostException, IOException, ClassNotFoundException{
         connectDistributor();
-        out.writeObject("SERVER#CONNECT#"+address+";"+port);//Concatena as informações e as envia para o servidor
+        out.writeObject("CLIENT#CONNECT#");//Concatena as informações e as envia para o servidor
         in = new ObjectInputStream(server.getInputStream());//recebe informação advinda do servidor
         String s = (String) in.readObject();//"quebra" a informação do servidor
+        disconnect();//Desconecta
         if(s!=null){
             String[] aux = s.split(";");
-            addressServers = InetAddress.getByName(aux[0]);
-            portServers = Integer.parseInt(aux[1]);
-            s=getStorages();
+            addressServer = InetAddress.getByName(aux[0]);
+            portServer = Integer.parseInt(aux[1]);
             return "SUCCESS";
+        }else{
+            return "FALHA";
         }
-        disconnect();//Desconecta
-        return "FAIL";
     }
 
-    public String getStorages() throws IOException, ClassNotFoundException{
-        connectDistributor();
+    public String register(String name, String login, String passwd) throws IOException, ClassNotFoundException {
+        connectServer();
+        out.writeObject("CLIENT#REGISTER#"+name+";"+login+";"+passwd);
         in = new ObjectInputStream(server.getInputStream());//recebe informação advinda do servidor
-        out.writeObject("SERVER#GETSTORAGES#");
         String s = (String) in.readObject();
         if(s!=null){
-            String aux[] = s.split(";");
-            addressStorages = InetAddress.getByName(aux[0]);
-            portStorages = Integer.parseInt(aux[1]);
             return "SUCCESS";
+        }else{
+            return "FALHA";
         }
-        return s;
-    }
+    }  
     
-    public void serverDisconnect(String address, String port) throws IOException, ClassNotFoundException {
-        connectDistributor();
-        out.writeObject("SERVER#DISCONNECT#"+address+";"+port);//Concatena as informações e as envia para o servidor
+    public String login(String login, String passworld) throws IOException, ClassNotFoundException {
+        connectServer();
+        out.writeObject("CLIENT#LOGIN#"+login+";"+passworld);//Concatena as informações e as envia para o servidor
         in = new ObjectInputStream(server.getInputStream());//recebe informação advinda do servidor
         String s = (String) in.readObject();//"quebra" a informação do servidor
         disconnect();//Desconecta
-    }
-    
-    public String getLog(int logSize) throws IOException, ClassNotFoundException {
-        connectServers();
-        out.writeObject("SERVER#GETLOG#"+logSize);
-        in = new ObjectInputStream(server.getInputStream());//recebe informação advinda do servidor
-        String s = (String) in.readObject();//"quebra" a informação do servidor
-        disconnect();//Desconecta
-        if(s!=null)
+        if(s!=null){
             return "SUCCESS";
-        return "FAIL";
+        }else{
+            return "FALHA";
+        }
     }
+    
+    public LinkedList<String> getProducts() throws IOException, ClassNotFoundException {
+        connectServer();
+        out.writeObject("CLIENT#GETPRODUCTS#");
+        in = new ObjectInputStream(server.getInputStream());//recebe informação advinda do servidor
+        LinkedList s = (LinkedList) in.readObject();//"quebra" a informação do servidor
+        disconnect();//Desconecta
+        return s;
+    }  
 }

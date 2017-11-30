@@ -5,7 +5,7 @@
  */
 package br.com.storehouse.view;
 
-import br.com.storehouse.controller.Controller;
+import br.com.storehouse.controller.ControllerStorage;
 import java.util.LinkedList;
 import javax.swing.table.DefaultTableModel;
 
@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
 public class ListProduct extends javax.swing.JDialog {
 
     private DefaultTableModel products;
-    private Controller ctrl;
+    private ControllerStorage ctrl;
 
     /**
      * Creates new form ListProduct
@@ -26,7 +26,7 @@ public class ListProduct extends javax.swing.JDialog {
         initComponents();
     }
 
-    public ListProduct(Home aThis, boolean b, Controller ctrl) {
+    public ListProduct(HomeStorage aThis, boolean b, ControllerStorage ctrl) {
         super(aThis, b);
         this.ctrl = ctrl;
         initComponents();
@@ -172,7 +172,6 @@ public class ListProduct extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tableProducts;
     // End of variables declaration//GEN-END:variables
-
 
     //Metodo usado para recuperar os dados dos pacientes em risco e coloca-los na tela
     private void searchData(){

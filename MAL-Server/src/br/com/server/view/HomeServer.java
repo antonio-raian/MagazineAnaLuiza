@@ -8,8 +8,10 @@ package br.com.server.view;
 import br.com.server.connection.ConnectionServer;
 import br.com.server.connection.ServerTCP;
 import br.com.server.connection.ServerUDP;
-import br.com.server.control.Controller;
+import br.com.server.control.ControllerServer;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -18,19 +20,22 @@ import javax.swing.JOptionPane;
  *
  * @author Antonio Raian
  */
-public class Home extends javax.swing.JFrame {
+public class HomeServer extends javax.swing.JFrame {
 
     /**
-     * Creates new form Home
+     * Creates new form HomeServer
      */
     private ConnectionServer connection;
     private ServerTCP stcp;
     private ServerUDP sudp;
+    private String number = "";
+    private final ControllerServer ctrl;
     
-    private Controller ctrl = new Controller();
-    public Home() {
+    public HomeServer() throws IOException {
+        ctrl = new ControllerServer(getNumber());
         connection = new ConnectionServer();
         initComponents();
+        jLabel1.setText("Servidor "+number);
     }
 
     /**
@@ -50,9 +55,8 @@ public class Home extends javax.swing.JFrame {
         txtPortDistributor = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        txtIpServer = new javax.swing.JTextField();
         txtPortServer = new javax.swing.JTextField();
+        lbConnection = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         btnConnection = new javax.swing.JButton();
         btnDisconnect = new javax.swing.JButton();
@@ -64,8 +68,10 @@ public class Home extends javax.swing.JFrame {
 
         jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel3.setText("Porta Distribuidor:");
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel2.setText("IP Distribuidor:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -101,7 +107,8 @@ public class Home extends javax.swing.JFrame {
 
         jLabel4.setText("Porta Servidor:");
 
-        jLabel5.setText("IP Servidor:");
+        lbConnection.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lbConnection.setText("DESCONECTADO");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -110,12 +117,13 @@ public class Home extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtIpServer)
-                    .addComponent(txtPortServer))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtPortServer, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lbConnection)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -123,13 +131,11 @@ public class Home extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(txtIpServer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtPortServer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(lbConnection)
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         jPanel3.setLayout(new java.awt.GridLayout(1, 0));
@@ -162,7 +168,7 @@ public class Home extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -176,7 +182,7 @@ public class Home extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         pack();
@@ -185,27 +191,29 @@ public class Home extends javax.swing.JFrame {
     private void btnConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectionActionPerformed
         try {
             connection.setInfos(txtIpDistributor.getText(), txtPortDistributor.getText());
-            String s = connection.newServerConnection(txtIpServer.getText(), txtPortServer.getText());
+            String s = connection.newServerConnection(InetAddress.getLocalHost().getHostAddress(), txtPortServer.getText());
             if(s.equals("SUCCESS")){
                 JOptionPane.showMessageDialog(null, "Servidor Conectado!");
+                s = connection.getLog(ctrl.getLogSize());
+                if(s.equals("SUCCESS")){
+                    JOptionPane.showMessageDialog(null, "Servidor Atualizado!");
+                }
+                lbConnection.setText(InetAddress.getLocalHost().getHostAddress()+":"+txtPortServer.getText());//muda informação da tela para IP e porta de conexão
             }
             stcp = new ServerTCP(Integer.parseInt(txtPortServer.getText()), ctrl);
             sudp = new ServerUDP(ctrl);
-        } catch (IOException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Não foi possível conectar-se ao servidor "+ex.getMessage());
-        } catch (ClassNotFoundException ex) {
-            JOptionPane.showMessageDialog(null, "Não foi possível conectar-se ao servidor"+ex.getMessage());
         }
     }//GEN-LAST:event_btnConnectionActionPerformed
 
     private void btnDisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisconnectActionPerformed
         try {
-            connection.serverDisconnect(txtIpServer.getText(), txtPortServer.getText());
+            connection.serverDisconnect(InetAddress.getLocalHost().getHostAddress(), txtPortServer.getText());
             stcp.stop();
             sudp.stop();
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Não foi possível desconectar-se do servidor "+ex.getMessage());
-        } catch (ClassNotFoundException ex) {
+            lbConnection.setText("DESCONECTADO");
+        } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Não foi possível desconectar-se do servidor "+ex.getMessage());
         }
         
@@ -228,20 +236,25 @@ public class Home extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HomeServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HomeServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HomeServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HomeServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Home().setVisible(true);
+                try {
+                    new HomeServer().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(HomeServer.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -253,13 +266,22 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lbConnection;
     private javax.swing.JTextField txtIpDistributor;
-    private javax.swing.JTextField txtIpServer;
     private javax.swing.JTextField txtPortDistributor;
     private javax.swing.JTextField txtPortServer;
     // End of variables declaration//GEN-END:variables
+
+    private String getNumber() throws ClosedByInterruptException {
+        while("".equals(number)){
+            number = JOptionPane.showInputDialog("Qual o numero identificador desse servidor?");
+        }
+        if(number==null){
+            throw new ClosedByInterruptException();
+        } 
+        return number;
+    }
 }

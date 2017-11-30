@@ -5,7 +5,7 @@
  */
 package br.com.server.connection;
 
-import br.com.server.control.Controller;
+import br.com.server.control.ControllerServer;
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -16,10 +16,10 @@ import java.net.ServerSocket;
 //Classe responsável por criar as Threads para o servidor TCP
 public class ServerTCP implements Runnable{
     private final ServerSocket servidor; //Objeto responsavel por criar conexões (Abrir portas)
-    private final Controller ctrl; //Variavel que recebe objeto que contem as infomações do sistema
+    private final ControllerServer ctrl; //Variavel que recebe objeto que contem as infomações do sistema
     
     //Construtor
-    public ServerTCP(int porta, Controller ctrl) throws IOException {
+    public ServerTCP(int porta, ControllerServer ctrl) throws IOException {
         //Informa a porta que o servidor vai tá "ouvindo"
         servidor = new ServerSocket(porta);//Abre a conexão para uma determinada porta
         System.out.println("TCP: Ouvindo a porta "+porta);

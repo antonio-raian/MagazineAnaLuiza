@@ -5,7 +5,7 @@
  */
 package br.com.distributor.connection;
 
-import br.com.distributor.control.Controller;
+import br.com.distributor.control.ControllerDistributor;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -19,10 +19,10 @@ import java.net.SocketException;
 public class ServerUDP implements Runnable{
     private final DatagramSocket server; //atributo responsável por estabelecer a conexão UDP
     private byte[] receive = new byte[2048];//Array para receber a informação da conexão
-    private final Controller ctrl; //Atributo que recebe o controlador
+    private final ControllerDistributor ctrl; //Atributo que recebe o controlador
 
     //Construtor 
-    public ServerUDP(int port, Controller ctrl) throws SocketException, IOException {
+    public ServerUDP(int port, ControllerDistributor ctrl) throws SocketException, IOException {
         server = new DatagramSocket(port);//Abre uma coneão UDP para uma determinada porta
         this.ctrl = ctrl;
         System.out.println("UDP: Ouvindo a porta "+port);

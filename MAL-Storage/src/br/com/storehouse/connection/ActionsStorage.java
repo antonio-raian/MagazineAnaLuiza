@@ -5,15 +5,13 @@
  */
 package br.com.storehouse.connection;
 
-import br.com.storehouse.controller.Controller;
+import br.com.storehouse.controller.ControllerStorage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.util.LinkedList;
 
 /**
  *
@@ -27,11 +25,11 @@ public class ActionsStorage extends Thread{
     private ObjectOutputStream saida; // Objeto usado para enviar mensagens aos clientes TCP
     private DatagramPacket entradaUDP; //Objeto usado para enviar mensagens aos clientes UDP;
     private byte[] saidaUDP;
-    private final Controller ctrl;//Nosso objeto que contem as listas e informações salvas do sistema
+    private final ControllerStorage ctrl;//Nosso objeto que contem as listas e informações salvas do sistema
     private final String str; //String usada pra receber as requisições dos clientes
     
     //Construtor que permite conexão TCP
-    public ActionsStorage(Socket socket, Controller ctrl) throws IOException, ClassNotFoundException {
+    public ActionsStorage(Socket socket, ControllerStorage ctrl) throws IOException, ClassNotFoundException {
         clienteTCP = socket;//Recebe a conexão
         this.ctrl = ctrl;//Seta o objeto que contem as informações do Sistema
         
@@ -41,7 +39,7 @@ public class ActionsStorage extends Thread{
         System.out.println("Recebido: "+str);
     }
     //Construtor que permite conexão UDP
-    public ActionsStorage(DatagramSocket socket, DatagramPacket packet, Controller ctrl) throws IOException{
+    public ActionsStorage(DatagramSocket socket, DatagramPacket packet, ControllerStorage ctrl) throws IOException{
         this.ctrl = ctrl;//Seta o objeto que contem as informações do Sistema
         this.entradaUDP = packet; //Recebe o pacote enviado ao servidor
         clienteUDP = socket;//Recebe o meio de comunicação com o cliente
@@ -96,7 +94,7 @@ public class ActionsStorage extends Thread{
     }
 
     private void deleteItem(String item) throws IOException {
-        ctrl.removeProduct(item.substring(0, item.charAt(';')));
+        ctrl.removeProduct(item);
         ctrl.saveLog(str);
     }
 
