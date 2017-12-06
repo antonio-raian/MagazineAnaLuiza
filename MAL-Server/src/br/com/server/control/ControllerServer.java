@@ -343,5 +343,8 @@ public class ControllerServer {
     //Metodo que persiste todos os arquivos
     public void saveAll() throws IOException {
         saveList("ProductsServer.txt", products);
+        saveList(fileNameLog, log);
+        saveList("Depositos.txt", storages);
+        saveList("Users.txt", users);
     }
 }
