@@ -62,17 +62,29 @@ public class ConnectionStorage {
     }
 
     public String getLog(int logSize) throws IOException {
-        String s = "STORAGE#GETLOG#"+logSize;
+        String s = "STORAGE#GETLOG#"+logSize+"#"+address+"#";
         DatagramPacket sendDP = new DatagramPacket(s.getBytes(), s.getBytes().length, InetAddress.getByName(storageGroup), storagePort);
-        serversSocket.send(sendDP);
+        storageSocket.send(sendDP);
         DatagramPacket receiveDP = new DatagramPacket(this.receive, this.receive.length);
-        serversSocket.setSoTimeout(3000);
-        try{            
-            serversSocket.receive(receiveDP);
-        }catch (SocketException | SocketTimeoutException ex){
+        storageSocket.setSoTimeout(3000);
+        int i =0;
+        s = null;
+        while(s==null && i<3){
+            try{            
+                storageSocket.receive(receiveDP);
+                s = new String(receiveDP.getData());
+                String aux[] = s.split("#");
+                if(aux[3].equals(address)){
+                    s=null;
+                }
+            }catch (SocketException | SocketTimeoutException ex){                
+            }
+            i++;
+        }
+        if(s==null){
             return "Socket TimeOut";
-        }        
+        }
         System.out.println("recebeu");
-        return new String(receiveDP.getData());
+        return s;
     }
 }

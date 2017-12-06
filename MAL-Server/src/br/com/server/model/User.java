@@ -5,12 +5,15 @@
  */
 package br.com.server.model;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author Antonio Raian
  */
 public class User {
     private String name, login, passworld;
+    private LinkedList<String> shoppings;
 
     public User() {
     }
@@ -43,6 +46,14 @@ public class User {
 
     public void setPassworld(String passworld) {
         this.passworld = passworld;
+    }
+
+    public LinkedList<String> getShoppings() {
+        return shoppings;
+    }
+
+    public void setShoppings(LinkedList<String> shoppings) {
+        this.shoppings = shoppings;
     }
 
     @Override

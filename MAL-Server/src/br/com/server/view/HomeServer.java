@@ -30,12 +30,12 @@ public class HomeServer extends javax.swing.JFrame {
     private ServerUDP sudp;
     private String number = "";
     private final ControllerServer ctrl;
-    
+    private String address = InetAddress.getLocalHost().getHostAddress();
     public HomeServer() throws IOException {
-        ctrl = new ControllerServer(getNumber());
+        ctrl = new ControllerServer();
         connection = new ConnectionServer();
         initComponents();
-        jLabel1.setText("Servidor "+number);
+        jLabel1.setText("Servidor "+address);
     }
 
     /**
@@ -60,6 +60,8 @@ public class HomeServer extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         btnConnection = new javax.swing.JButton();
         btnDisconnect = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        btnSave = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -74,6 +76,10 @@ public class HomeServer extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel2.setText("IP Distribuidor:");
 
+        txtIpDistributor.setText("localhost");
+
+        txtPortDistributor.setText("48900");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -85,7 +91,7 @@ public class HomeServer extends javax.swing.JFrame {
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtIpDistributor)
+                    .addComponent(txtIpDistributor, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
                     .addComponent(txtPortDistributor))
                 .addContainerGap())
         );
@@ -120,7 +126,7 @@ public class HomeServer extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtPortServer, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))
+                        .addComponent(txtPortServer))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(lbConnection)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -156,19 +162,30 @@ public class HomeServer extends javax.swing.JFrame {
         });
         jPanel3.add(btnDisconnect);
 
+        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+
+        btnSave.setText("Salvar dados");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnSave);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -182,7 +199,9 @@ public class HomeServer extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -191,16 +210,22 @@ public class HomeServer extends javax.swing.JFrame {
     private void btnConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectionActionPerformed
         try {
             connection.setInfos(txtIpDistributor.getText(), txtPortDistributor.getText());
-            String s = connection.newServerConnection(InetAddress.getLocalHost().getHostAddress(), txtPortServer.getText());
+            connection.newServerConnection(address, txtPortServer.getText());
+            String s = connection.getStorages();
             if(s.equals("SUCCESS")){
                 JOptionPane.showMessageDialog(null, "Servidor Conectado!");
-                s = connection.getLog(ctrl.getLogSize());
-                if(s.equals("SUCCESS")){
+                s = "Socket TimeOut";
+                int i =0;
+                while (s.equals("Socket TimeOut")&&i<3){
+                    s = connection.getLog(ctrl.getLogSize());
+                    i++;
+                }
+                if(ctrl.verifyLog(s)){
                     JOptionPane.showMessageDialog(null, "Servidor Atualizado!");
                 }
-                lbConnection.setText(InetAddress.getLocalHost().getHostAddress()+":"+txtPortServer.getText());//muda informação da tela para IP e porta de conexão
+                lbConnection.setText(address+":"+txtPortServer.getText());//muda informação da tela para IP e porta de conexão
             }
-            stcp = new ServerTCP(Integer.parseInt(txtPortServer.getText()), ctrl);
+            stcp = new ServerTCP(Integer.parseInt(txtPortServer.getText()), ctrl, connection);
             sudp = new ServerUDP(ctrl);
         } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Não foi possível conectar-se ao servidor "+ex.getMessage());
@@ -209,7 +234,7 @@ public class HomeServer extends javax.swing.JFrame {
 
     private void btnDisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisconnectActionPerformed
         try {
-            connection.serverDisconnect(InetAddress.getLocalHost().getHostAddress(), txtPortServer.getText());
+            connection.serverDisconnect(address, txtPortServer.getText());
             stcp.stop();
             sudp.stop();
             lbConnection.setText("DESCONECTADO");
@@ -218,6 +243,15 @@ public class HomeServer extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_btnDisconnectActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        try {
+            ctrl.saveAll();
+            System.out.println("Dados Salvos");
+        } catch (IOException ex) {
+            System.out.println("Problema "+ex.getMessage()+" ao tentar salvar");
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -262,6 +296,7 @@ public class HomeServer extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConnection;
     private javax.swing.JButton btnDisconnect;
+    private javax.swing.JButton btnSave;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -269,19 +304,20 @@ public class HomeServer extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel lbConnection;
     private javax.swing.JTextField txtIpDistributor;
     private javax.swing.JTextField txtPortDistributor;
     private javax.swing.JTextField txtPortServer;
     // End of variables declaration//GEN-END:variables
 
-    private String getNumber() throws ClosedByInterruptException {
-        while("".equals(number)){
-            number = JOptionPane.showInputDialog("Qual o numero identificador desse servidor?");
-        }
-        if(number==null){
-            throw new ClosedByInterruptException();
-        } 
-        return number;
-    }
+//    private String getNumber() throws ClosedByInterruptException {
+//        while("".equals(number)){
+//            number = JOptionPane.showInputDialog("Qual o numero identificador desse servidor?");
+//        }
+//        if(number==null){
+//            throw new ClosedByInterruptException();
+//        } 
+//        return number;
+//    }
 }

@@ -145,7 +145,8 @@ public class HomeStorage extends javax.swing.JFrame {
             connection = new ConnectionStorage();
             String resp = "Socket TimeOut";
             int i =0;
-            while (resp.equals("Socket TimeOut")&&i<5){
+            while (resp.equals("Socket TimeOut")&&i<3){
+                System.out.println("tentando acessar o log...");
                 resp = connection.getLog(ctrl.getLogSize());
                 i++;
             }

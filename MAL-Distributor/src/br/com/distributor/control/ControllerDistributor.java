@@ -28,8 +28,9 @@ public class ControllerDistributor {
     }
     
     public String newServerConnection(String data){
-        servers.add(data);
-        return addressServers+";"+portServers; //Retorna porta e endereço do grupo de servidores;
+        if(!servers.contains(data))
+            servers.add(data);
+        return addressServers+";"+portServers+";"; //Retorna porta e endereço do grupo de servidores;
     }
     
     //Métoro que faz o ciclo dos servidores (O servidor da vez reebe a conexão e vai pro final da fila)
@@ -40,9 +41,8 @@ public class ControllerDistributor {
             servers.add(server);//Coloca no final
         }catch (NoSuchElementException e){
         }
-        if(server!=null)
-            return server;//retorna o endereço e a porta do servidor da vez
-        return null;
+        
+        return server;//retorna o endereço e a porta do servidor da vez
     }
 
     public boolean serverDisconnect(String data) {
@@ -51,5 +51,9 @@ public class ControllerDistributor {
 
     public String getStoragesAddress() {
         return addressStorages+";"+portStorages;
+    }
+    
+    public LinkedList<String> getServers(){
+        return servers;
     }
 }

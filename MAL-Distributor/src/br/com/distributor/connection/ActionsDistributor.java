@@ -7,11 +7,8 @@ package br.com.distributor.connection;
 
 import br.com.distributor.control.ControllerDistributor;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Socket;
 
 /**
  *
@@ -19,25 +16,11 @@ import java.net.Socket;
  */
 //Classe (thread) responsável por todas as ações do servior, responsável por decifrar informações vindas dos clientes
 public class ActionsDistributor extends Thread{
-    private Socket clientTCP;//Variavel responsável por receber a conexão do servidor TCP
     private DatagramSocket clientUDP;//Variavel responsável por receber a conexão do servidor UDP
-    private ObjectInputStream inputTCP;//Objetos que armazena informações advindas do cliente
-    private ObjectOutputStream outputTCP; // Objeto usado para enviar mensagens aos clientes TCP
     private DatagramPacket inputUDP; //Objeto usado para enviar mensagens aos clientes UDP;
-    private byte[] outputUDP;
     private final ControllerDistributor ctrl;//Nosso objeto que contem as listas e informações salvas do sistema
     private final String str; //String usada pra receber as requisições dos clientes
     
-    //Construtor que permite conexão TCP
-    public ActionsDistributor(Socket socket, ControllerDistributor ctrl) throws IOException, ClassNotFoundException {
-        clientTCP = socket;//Recebe a conexão
-        this.ctrl = ctrl;//Seta o objeto que contem as informações do Sistema
-        
-        inputTCP = new ObjectInputStream(clientTCP.getInputStream());//Decifra as informações vindas do cliente
-        System.out.println("Cliente TCP: "+clientTCP.getInetAddress()+":"+clientTCP.getPort());
-        str = (String) inputTCP.readObject();//Transforma o objeto passado em String
-        System.out.println("Recebido: "+str);
-    }
     //Construtor que permite conexão UDP
     public ActionsDistributor(DatagramSocket socket, DatagramPacket packet, ControllerDistributor ctrl) throws IOException{
         this.ctrl = ctrl;//Seta o objeto que contem as informações do Sistema
@@ -85,30 +68,27 @@ public class ActionsDistributor extends Thread{
     }
 
     private void newClientConnection() throws IOException {
-        outputTCP = new ObjectOutputStream(clientTCP.getOutputStream());
-        String s = ctrl.newClientConnection();
-        System.out.println(s);
-        outputTCP.writeObject(s);
-        outputTCP.flush();
-        outputTCP.close();
+        String resp = ctrl.newClientConnection();
+        if(resp==null){
+            resp = "null";
+        }
+        //Cria um pacote e concatena a String de retorno
+        DatagramPacket sendResult = new DatagramPacket(resp.getBytes(), resp.getBytes().length, inputUDP.getAddress(),inputUDP.getPort());
+        clientUDP.send(sendResult);//Envia o pacote criado para o cliente
     }
 
     private void newServerConnection(String data) throws IOException {
         String resp = ctrl.newServerConnection(data);
-        outputTCP = new ObjectOutputStream(clientTCP.getOutputStream());
-        System.out.println(resp);
-        outputTCP.writeObject(resp);
-        outputTCP.flush();
-        outputTCP.close();        
+        //Cria um pacote e concatena a String de retorno
+        DatagramPacket sendResult = new DatagramPacket(resp.getBytes(), resp.getBytes().length, inputUDP.getAddress(),inputUDP.getPort());
+        clientUDP.send(sendResult);//Envia o pacote criado para o cliente
     }
     
     private void getStorages() throws IOException {
         String resp = ctrl.getStoragesAddress();
-        outputTCP = new ObjectOutputStream(clientTCP.getOutputStream());
-        System.out.println(resp);
-        outputTCP.writeObject(resp);
-        outputTCP.flush();
-        outputTCP.close();        
+        //Cria um pacote e concatena a String de retorno
+        DatagramPacket sendResult = new DatagramPacket(resp.getBytes(), resp.getBytes().length, inputUDP.getAddress(),inputUDP.getPort());
+        clientUDP.send(sendResult);//Envia o pacote criado para o cliente
     }
 
     private void disconnect(String data) throws IOException {
@@ -118,10 +98,8 @@ public class ActionsDistributor extends Thread{
         }else{
             resp  = "FAIL";
         }
-        outputTCP = new ObjectOutputStream(clientTCP.getOutputStream());
-        System.out.println(resp);
-        outputTCP.writeObject(resp);
-        outputTCP.flush();
-        outputTCP.close();
+        //Cria um pacote e concatena a String de retorno
+        DatagramPacket sendResult = new DatagramPacket(resp.getBytes(), resp.getBytes().length, inputUDP.getAddress(),inputUDP.getPort());
+        clientUDP.send(sendResult);//Envia o pacote criado para o cliente
     }
 }

@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class Register extends javax.swing.JDialog {
 
-    private ConnectionClient connection;
+    private ConnectionClient connection;//Atributo usado para acessar a classe de conexão
     /**
      * Creates new form Register
      */
@@ -23,13 +23,14 @@ public class Register extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
     }
-    
+    //Contrutor usado para pegar o objeto de conexão
     public Register(HomeClient parent, boolean modal, ConnectionClient connection) {
         super(parent, modal);
         this.connection = connection;
         initComponents();
     }
 
+    //Contrutor usado para pegar o objeto de conexão e o login do usuário
     Register(HomeClient parent, boolean modal, ConnectionClient connection, String login) {
         super(parent, modal);
         this.connection = connection;
@@ -156,9 +157,11 @@ public class Register extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
 
+    //Metodo da ação de salvar os dados no sistema
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         String resp;
         try {
+            //Passa a informação para o objeto responsável pela conexão
             resp = connection.register(txtName.getText(), txtUserName.getText(), txtPasswd.getText());
             if(resp.equals("SUCCESS")){
                 JOptionPane.showMessageDialog(null, "Cliente Cadastrado com sucesso");

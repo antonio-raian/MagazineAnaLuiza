@@ -17,13 +17,15 @@ import java.net.ServerSocket;
 public class ServerTCP implements Runnable{
     private final ServerSocket servidor; //Objeto responsavel por criar conexões (Abrir portas)
     private final ControllerServer ctrl; //Variavel que recebe objeto que contem as infomações do sistema
+    private final ConnectionServer connection;
     
     //Construtor
-    public ServerTCP(int porta, ControllerServer ctrl) throws IOException {
+    public ServerTCP(int porta, ControllerServer ctrl, ConnectionServer connection) throws IOException {
         //Informa a porta que o servidor vai tá "ouvindo"
         servidor = new ServerSocket(porta);//Abre a conexão para uma determinada porta
         System.out.println("TCP: Ouvindo a porta "+porta);
         this.ctrl = ctrl;
+        this.connection = connection;
         new Thread(this).start();//Criando e iniciando uma thread principal
     }
     @Override
@@ -32,7 +34,7 @@ public class ServerTCP implements Runnable{
             while(!servidor.isClosed()){//Laço de repetição para a criação de várias threads a medida que receber novas conexões
                 // aceitando a conexão com o cliente e inicializando uma thread
                 //Ao receber uma conexão, cria-se uma thread do tipo AtividadeServidor que irá tratar as informações recebidas
-                new ActionsServer(servidor.accept(),ctrl).start();
+                new ActionsServer(servidor.accept(),ctrl, connection).start();
                 System.out.println("Mais um cliente TCP atendido!");
             }
         }catch(Exception e){

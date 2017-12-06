@@ -100,6 +100,7 @@ public class ActionsStorage extends Thread{
 
     private void getLog(String lastPosition) throws IOException {
         String list = ctrl.getLog(Integer.parseInt(lastPosition));
+        System.out.println("Enviando Log "+list);
         DatagramPacket sendDP = new DatagramPacket(list.getBytes(), list.getBytes().length, entradaUDP.getAddress(), entradaUDP.getPort());
         clienteUDP.send(sendDP);
     }

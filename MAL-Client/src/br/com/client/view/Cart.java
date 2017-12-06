@@ -5,16 +5,11 @@
  */
 package br.com.client.view;
 
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
+import br.com.client.connection.ConnectionClient;
+import java.io.IOException;
 import java.util.LinkedList;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 /**
  *
@@ -25,16 +20,22 @@ public class Cart extends javax.swing.JDialog {
     /**
      * Creates new form Cart
      */
-    private LinkedList<String> cart;
+    private LinkedList<String> cart; //Lista de produtos do carrinho
+    private ConnectionClient connection;//Atributo usado para acessar a classe de conexão
+    private String login;//Login do usuário dono da possível compra
+    private double value;//Valor Total dos produtos do carrinho
     public Cart(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         init();
     }
-    
-    Cart(HomeClient parent, boolean modal, LinkedList<String> cart) {
+    //Construtor usado para receber o objeto de conexão, a lista de produtos e o login do usuário
+    Cart(HomeClient parent, boolean modal,ConnectionClient connection, LinkedList<String> cart, String login) {
         super(parent, modal);
         this.cart = cart;
+        value = getValueCart();//Calcula o valor total dos produtos do carrinho
+        this.connection = connection;
+        this.login = login;
         initComponents();
         init();
     }
@@ -57,6 +58,7 @@ public class Cart extends javax.swing.JDialog {
         panelDetails = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         btnUpdate = new javax.swing.JButton();
+        btnRemove = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -74,6 +76,15 @@ public class Cart extends javax.swing.JDialog {
         txtValue = new javax.swing.JFormattedTextField();
         jLabel13 = new javax.swing.JLabel();
         txtQuantity = new javax.swing.JFormattedTextField();
+        panelAddress = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        txtCoordinateX = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtCoordinateY = new javax.swing.JTextField();
+        lbCoordenada = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        txtValueTotal = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -82,7 +93,7 @@ public class Cart extends javax.swing.JDialog {
 
         jPanel2.setLayout(new java.awt.GridLayout(1, 0, 1, 0));
 
-        btnBuy.setText("Finalizar Compra");
+        btnBuy.setText("Checkin");
         btnBuy.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBuyActionPerformed(evt);
@@ -121,6 +132,14 @@ public class Cart extends javax.swing.JDialog {
             }
         });
         jPanel5.add(btnUpdate);
+
+        btnRemove.setText("Remover");
+        btnRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveActionPerformed(evt);
+            }
+        });
+        jPanel5.add(btnRemove);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel2.setText("Detalhes do Produto");
@@ -255,6 +274,29 @@ public class Cart extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel4.setText("Coordenada X:");
+        panelAddress.add(jLabel4);
+
+        txtCoordinateX.setColumns(5);
+        panelAddress.add(txtCoordinateX);
+
+        jLabel5.setText("Coordenada Y:");
+        panelAddress.add(jLabel5);
+
+        txtCoordinateY.setColumns(5);
+        panelAddress.add(txtCoordinateY);
+
+        lbCoordenada.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lbCoordenada.setText("Coordenada para entrega:");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setText("Valor Total:");
+
+        txtValueTotal.setColumns(5);
+        txtValueTotal.setEnabled(false);
+
+        jLabel14.setText("R$");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -262,14 +304,23 @@ public class Cart extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelAddress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(jLabel14)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(txtValueTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jLabel6)))
                                 .addGap(18, 18, 18)
-                                .addComponent(panelDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(panelDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lbCoordenada))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -281,8 +332,19 @@ public class Cart extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelDetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtValueTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbCoordenada)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panelAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -291,7 +353,26 @@ public class Cart extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuyActionPerformed
-
+        if(btnBuy.getText().equals("Checkin")){
+            lbCoordenada.setVisible(true);
+            panelAddress.setVisible(true);
+            btnBuy.setText("Finalizar Compra");
+        }else if(btnBuy.getText().equals("Finalizar Compra")){
+            try {                
+                String resp = connection.calculateTransport(value+"", txtCoordinateX.getText(), txtCoordinateY.getText());
+                int i = JOptionPane.showConfirmDialog(null, "Sua compra ficou no valor de: "+resp+"\n Deseja continuar a compra?");
+                if (i==0){
+                    resp = connection.buyTheList(login, cart, txtCoordinateX.getText(), txtCoordinateY.getText(), value+"");
+                    if(resp.equals("SUCCESS")){
+                        JOptionPane.showMessageDialog(null, "Compra realizada com sucesso");
+                        dispose();
+                        setVisible(false);
+                    }
+                }
+            } catch (IOException | ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(null, "Deu problema! "+ex.getMessage());
+            }
+        }
     }//GEN-LAST:event_btnBuyActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
@@ -299,30 +380,54 @@ public class Cart extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_btnCloseActionPerformed
 
+    //Metodo da lista que mostra os detalhes
     private void listProductsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listProductsMouseClicked
         String s[]=listProducts.getSelectedValue().split("-");
         detailsProduct(s[0]);
     }//GEN-LAST:event_listProductsMouseClicked
 
+    //metodo de ação do botão de atualizar a quantidade de um produto no carrinho
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         int quantity = 0;
-        while(quantity==0){
-            try{
-                quantity = Integer.parseInt(JOptionPane.showInputDialog("Digite a quantidade que deseja:"));
-            }catch(NumberFormatException ex){
-                JOptionPane.showMessageDialog(null, "Digite somente numeros!");
+        if(txtQuantity.getText().equals("")){
+            quantity = 0;
+            while(quantity==0){
+                try{
+                    quantity = Integer.parseInt(JOptionPane.showInputDialog("Digite a quantidade que deseja:"));
+                }catch(NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null, "Digite somente numeros!");
+                }
             }
+        }else{
+            quantity = Integer.parseInt(txtQuantity.getText());
         }
         for(String s:cart){
             String aux[] = s.split(";");
             if(aux[0].equals(txtCod.getText())){                
-                cart.remove(s);
-                cart.add(aux[0]+";"+aux[1]+";"+aux[2]+";"+aux[3]+";"+aux[4]+";"+quantity+";"+aux[6]);
-                break;
+                int auxquantity = Integer.parseInt(aux[7]);
+                if(quantity<=auxquantity){
+                    cart.remove(s);
+                    cart.add(aux[0]+";"+aux[1]+";"+aux[2]+";"+aux[3]+";"+aux[4]+";"+quantity+";"+aux[6]);
+                    break;
+                }else{
+                    JOptionPane.showMessageDialog(null, "A quantidade disponível é: "+auxquantity);
+                    break;
+                }
             }
         }        
         init();
     }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
+        for(String s:cart){
+            String aux[] = s.split(";");
+            if(aux[0].equals(txtCod.getText())){
+                cart.remove(s);
+                break;
+            }
+        }
+        init();
+    }//GEN-LAST:event_btnRemoveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -369,13 +474,18 @@ public class Cart extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuy;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnRemove;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -384,36 +494,37 @@ public class Cart extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbCoordenada;
     private javax.swing.JList<String> listProducts;
+    private javax.swing.JPanel panelAddress;
     private javax.swing.JPanel panelDetails;
     private javax.swing.JTextField txtCod;
+    private javax.swing.JTextField txtCoordinateX;
+    private javax.swing.JTextField txtCoordinateY;
     private javax.swing.JTextArea txtDescription;
     private javax.swing.JTextField txtKind;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtProducer;
     private javax.swing.JFormattedTextField txtQuantity;
     private javax.swing.JFormattedTextField txtValue;
+    private javax.swing.JTextField txtValueTotal;
     // End of variables declaration//GEN-END:variables
 
-    private DefaultListModel products;
+    private DefaultListModel products;//Model da jList
+    //Metodo que carrga todos os produtos da lista de produtos na jList
     private void init() {
         products = new DefaultListModel();
         for(String s:cart){
             String[] aux = s.split(";");
             products.addElement(aux[0]+"-"+aux[1]);
         }
-        listProducts.setModel(products);    
+        listProducts.setModel(products);
+        panelAddress.setVisible(false);
+        lbCoordenada.setVisible(false);
+        txtValueTotal.setText(value+"");
     }
     
-    private String[] findProduct(String code){
-        for(String s:cart){
-            String[] aux = s.split(":");
-            if(code.equals(aux[0]))
-                return aux;
-        }
-        return null;
-    }
-    
+    //Metodo que seta na tela as informações do produto do carrinho
     private void detailsProduct(String code){
         for(String s:cart){
             String[] aux = s.split(";");
@@ -427,7 +538,15 @@ public class Cart extends javax.swing.JDialog {
                 txtValue.setText(aux[6]);
             }
         }
-        
-        
+    }
+
+    //Metodo que calcula o valor total dos produtos do carrinho
+    private double getValueCart() {
+        double value = 0;
+        for(String s:cart){
+            String[] aux = s.split(";");
+            value += (Double.parseDouble(aux[6])*Integer.parseInt(aux[5]));
+        }
+        return value;
     }
 }

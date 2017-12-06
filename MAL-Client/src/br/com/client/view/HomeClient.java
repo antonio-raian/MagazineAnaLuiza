@@ -18,9 +18,9 @@ import javax.swing.table.DefaultTableModel;
  */
 public class HomeClient extends javax.swing.JFrame {
 
-    private DefaultTableModel productsTable;
-    private final ConnectionClient connection = new ConnectionClient();;
-    private final LinkedList<String> cart = new LinkedList<>();
+    private DefaultTableModel productsTable;//Model da tabela de produtos
+    private ConnectionClient connection;//Atributo usado para acessar a classe de conexão
+    private LinkedList<String> cart = new LinkedList<>(); //Lista de produtos do carrinho
     private String login = "";
     /**
      * Creates new form Home
@@ -55,10 +55,7 @@ public class HomeClient extends javax.swing.JFrame {
         txtPasswd = new javax.swing.JPasswordField();
         btnLogon = new javax.swing.JButton();
         btnRegister = new javax.swing.JButton();
-        lbStatus = new javax.swing.JLabel();
         panelProducts = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbProducts = new javax.swing.JTable();
         panelDetails = new javax.swing.JPanel();
@@ -82,6 +79,7 @@ public class HomeClient extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         txtQuantity = new javax.swing.JFormattedTextField();
         btnCarrinho = new javax.swing.JButton();
+        lbStatus = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -93,6 +91,7 @@ public class HomeClient extends javax.swing.JFrame {
         panelDistributor.add(jLabel1);
 
         txtDist.setColumns(20);
+        txtDist.setText("localhost");
         panelDistributor.add(txtDist);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
@@ -100,6 +99,7 @@ public class HomeClient extends javax.swing.JFrame {
         panelDistributor.add(jLabel3);
 
         txtPort.setColumns(10);
+        txtPort.setText("48900");
         panelDistributor.add(txtPort);
 
         btnConectar.setText("Conectar");
@@ -142,18 +142,6 @@ public class HomeClient extends javax.swing.JFrame {
             }
         });
         jPanel3.add(btnRegister);
-
-        lbStatus.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jPanel3.add(lbStatus);
-
-        jLabel6.setFont(new java.awt.Font("Tempus Sans ITC", 1, 11)); // NOI18N
-        jLabel6.setText("Pesquisa por nome:");
-
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextField1KeyPressed(evt);
-            }
-        });
 
         tbProducts.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
         tbProducts.setModel(new javax.swing.table.DefaultTableModel(
@@ -243,7 +231,7 @@ public class HomeClient extends javax.swing.JFrame {
                             .addComponent(jLabel7))
                         .addGap(35, 35, 35)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                            .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtProducer, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtKind, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtCod)))
@@ -326,20 +314,21 @@ public class HomeClient extends javax.swing.JFrame {
             }
         });
 
+        lbStatus.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lbStatus.setText("Deslogado");
+
         javax.swing.GroupLayout panelProductsLayout = new javax.swing.GroupLayout(panelProducts);
         panelProducts.setLayout(panelProductsLayout);
         panelProductsLayout.setHorizontalGroup(
             panelProductsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelProductsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelProductsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(panelProductsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addGroup(panelProductsLayout.createSequentialGroup()
-                            .addComponent(jLabel6)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(btnCarrinho))
+                .addGroup(panelProductsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(panelProductsLayout.createSequentialGroup()
+                        .addComponent(lbStatus)
+                        .addGap(140, 140, 140)
+                        .addComponent(btnCarrinho))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -351,13 +340,11 @@ public class HomeClient extends javax.swing.JFrame {
                 .addGroup(panelProductsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelProductsLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panelProductsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnCarrinho)
+                            .addComponent(lbStatus)
+                            .addComponent(btnCarrinho))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -373,8 +360,11 @@ public class HomeClient extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelProducts, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSeparator2)
-                    .addComponent(panelDistributor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(panelDistributor, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -393,23 +383,23 @@ public class HomeClient extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
-        
-    }//GEN-LAST:event_jTextField1KeyPressed
-
+    //Metodo para fazer a conexão com o distribuidor e com o servidor
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         try {
-            connection.setDistributor(txtDist.getText(), txtPort.getText());
-            String s = connection.newConnection();
+            connection.setDistributor(txtDist.getText(), txtPort.getText());//Informa qual os dados do distribuidor
+            String s = connection.newConnection();//Tenta a primeira conexão
             int lim = 0;
-            while(!s.equals("SUCCESS")&&lim <8){
+            //Loop para solicitar a conexão, caso não consiga em 3 tentativas manda mensagem de indisponibilidade de sistema
+            while(s.equals("Socket TimeOut")&&lim<3){
                 s = connection.newConnection();
                 lim++;
             }
-            if(s.equals("SUCCESS")){
+            if(s.equals("SUCCESS")){//Se a respota for positiva, carrega os produtos na tela
                 init();
-            }else{
+            }else if(s.equals("FAIL")){
                 JOptionPane.showMessageDialog(null, "Não há servidores disponíveis");
+            }else{
+                JOptionPane.showMessageDialog(null, "Esse Distribuidor está inativo");
             }
         } catch (UnknownHostException ex) {
             JOptionPane.showMessageDialog(null, "Não encontrou esse servidor");
@@ -421,14 +411,25 @@ public class HomeClient extends javax.swing.JFrame {
 
     private void btnLogonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogonActionPerformed
         try{            
-            String resp = connection.login(txtLogin.getText(),new String(txtPasswd.getPassword()));
-            if(resp.equals("SUCCESS")){
-                login = txtLogin.getText();
-                txtLogin.setText("");
-                txtPasswd.setText("");
-                lbStatus.setText("Conectado: "+login);
-            }else if(resp.equals("FAIL")){
-                JOptionPane.showMessageDialog(null, "Login inexistente, tente novamente!");
+            if(btnLogon.getText().equals("Login")){
+                String resp = connection.login(txtLogin.getText(),new String(txtPasswd.getPassword()));
+                if(resp.equals("SUCCESS")){
+                    login = txtLogin.getText();
+                    txtLogin.setText("");
+                    txtPasswd.setText("");
+                    lbStatus.setText("Conectado: "+login);
+                    btnAddCart.setEnabled(true);
+                    btnCarrinho.setEnabled(true);
+                    btnLogon.setText("Logout");
+                }else if(resp.equals("FAIL")){
+                    JOptionPane.showMessageDialog(null, "Login inexistente, tente novamente!");
+                }
+            }else if(btnLogon.getText().equals("Logout")){
+                txtLogin.setText(login);
+                btnAddCart.setEnabled(false);
+                btnCarrinho.setEnabled(false);
+                btnLogon.setText("Login");
+                lbStatus.setText("Desconectado");
             }
         } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Não foi possível comunicar com o servidor!");
@@ -442,15 +443,15 @@ public class HomeClient extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRegisterActionPerformed
 
     private void btnCarrinhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarrinhoActionPerformed
-        Cart car = new Cart(this, true,cart);
+        Cart car = new Cart(this, true, connection, cart, login);
         car.setVisible(true);
     }//GEN-LAST:event_btnCarrinhoActionPerformed
 
     private void tbProductsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbProductsMouseClicked
         int row = tbProducts.getSelectedRow();//Metodo que coleta a linha que foi selecionada
         if(row>=0){
-            //String cod = (String) tbProducts.getValueAt(row, 0);
-            detailsProduct(row);
+            String cod = (String) tbProducts.getValueAt(row, 0);
+            detailsProduct(cod);
         }
         try {
             init();
@@ -460,24 +461,39 @@ public class HomeClient extends javax.swing.JFrame {
     }//GEN-LAST:event_tbProductsMouseClicked
 
     private void btnAddCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCartActionPerformed
-        int quantity = 0;
-        while(quantity==0){
-            try{
-                quantity = Integer.parseInt(JOptionPane.showInputDialog("Digite a quantidade que deseja:"));
-            }catch(NumberFormatException ex){
-                JOptionPane.showMessageDialog(null, "Digite somente numeros!");
+        int quantity;
+        if(txtQuantity.getText().equals("")){
+            quantity = 0;
+            while(quantity==0){
+                try{
+                    quantity = Integer.parseInt(JOptionPane.showInputDialog("Digite a quantidade que deseja:"));
+                }catch(NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null, "Digite somente numeros!");
+                }
             }
+        }else{
+            quantity = Integer.parseInt(txtQuantity.getText());
         }
-        String item, aux[];
-        aux = findProduct(txtCod.getText());
-        item = aux[0]+";";
-        item += aux[1]+";";
-        item += aux[2]+";";
-        item += aux[3]+";";
-        item += aux[4]+";";
-        item += quantity+";";
-        item += aux[6];
-        cart.add(item);
+            String item, aux[];
+            aux = findProduct(txtCod.getText());
+            int auxquantity = Integer.parseInt(aux[5]);
+            if(quantity<=auxquantity){
+                String[] s = findProductOnCart(aux[0]);
+                if(s==null){
+                    item = aux[0]+";";
+                    item += aux[1]+";";
+                    item += aux[2]+";";
+                    item += aux[3]+";";
+                    item += aux[4]+";";
+                    item += quantity+";";
+                    item += aux[6]+";";
+                    item += aux[5]+";";
+
+                    cart.add(item);
+                }else
+                    updateQuantityCart(aux[0], quantity);
+            }else
+                JOptionPane.showMessageDialog(null, "A quantidade disponível é: "+auxquantity);
     }//GEN-LAST:event_btnAddCartActionPerformed
 
     /**
@@ -531,7 +547,6 @@ public class HomeClient extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -542,7 +557,6 @@ public class HomeClient extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lbStatus;
     private javax.swing.JPanel panelDetails;
     private javax.swing.JPanel panelDistributor;
@@ -560,7 +574,7 @@ public class HomeClient extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField txtQuantity;
     private javax.swing.JFormattedTextField txtValue;
     // End of variables declaration//GEN-END:variables
-    private LinkedList<String> products;
+    private String[] products;
     
     private void init() throws UnknownHostException, IOException, ClassNotFoundException{
         products = connection.getProducts();
@@ -580,22 +594,42 @@ public class HomeClient extends javax.swing.JFrame {
         tbProducts.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
     
-    private void detailsProduct(int code){
-        String[] aux = products.get(code).split(";");
-        txtCod.setText(aux[0]);
-        txtName.setText(aux[1]);
-        txtDescription.setText(aux[2]);
-        txtProducer.setText(aux[3]);
-        txtKind.setText(aux[4]);
-        txtValue.setText(aux[6]);
+    private void detailsProduct(String code){
+        for(String s:products){
+            String[] aux = s.split(";");
+            if(aux[0].equals(code)){
+                txtCod.setText(aux[0]);
+                txtName.setText(aux[1]);
+                txtDescription.setText(aux[2]);
+                txtProducer.setText(aux[3]);
+                txtKind.setText(aux[4]);
+                txtValue.setText(aux[6]);
+            }
+        }
     }
     
     private String[] findProduct(String code){
         for(String s:products){
-            String[] aux = s.split(":");
+            String[] aux = s.split(";");
             if(code.equals(aux[0]))
                 return aux;
         }
         return null;
+    }
+    
+    private String[] findProductOnCart(String code){
+        for(String s:cart){
+            String[] aux = s.split(";");
+            if(code.equals(aux[0]))
+                return aux;
+        }
+        return null;
+    }
+    
+    private void updateQuantityCart(String code, int quantity){
+        String[] s = findProductOnCart(code);
+        if(s!=null){
+            s[5] = quantity+";";
+        }
     }
 }

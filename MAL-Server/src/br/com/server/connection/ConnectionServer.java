@@ -6,10 +6,11 @@
 package br.com.server.connection;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 /**
@@ -17,18 +18,19 @@ import java.net.UnknownHostException;
  * @author Antonio Raian
  */
 public class ConnectionServer {
-    private Socket server;
+    private DatagramSocket serverUDP; //Objeto responsável pela conexão com o servidor
     private InetAddress addressDistributor;
     private InetAddress addressStorages;
     private InetAddress addressServers;
+    private String address;
     private int portDistributor;
     private int portStorages;
     private int portServers;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private byte[] outUDP; //Objeto que envia informação para o servidor
+    private final byte[] inUDP = new byte[2048]; //Objeto que recebe informação do servidor
 
-    public ConnectionServer(){
-        
+    public ConnectionServer() throws UnknownHostException{
+        address = InetAddress.getLocalHost().getHostAddress();
     }
     
     public void setInfos(String address, String port) throws UnknownHostException {
@@ -36,48 +38,41 @@ public class ConnectionServer {
         this.portDistributor = Integer.parseInt(port);
     }
     
-    public void connectDistributor() throws IOException{
-        server = new Socket(addressDistributor, portDistributor);
-        out = new ObjectOutputStream(server.getOutputStream());
-    }
-    
-    public void connectStorages() throws IOException{
-        server = new Socket(addressStorages, portStorages);
-        out = new ObjectOutputStream(server.getOutputStream());
-    }
-    
-    public void connectServers() throws IOException{
-        server = new Socket(addressServers, portServers);
-        out = new ObjectOutputStream(server.getOutputStream());
-    }
-    
-    public void disconnect() throws IOException{
-        in.close();
-        out.close();
-        server.close();
+    public void connect() throws IOException{
+        serverUDP = new DatagramSocket();
     }
 
     public String newServerConnection(String address, String port) throws UnknownHostException, IOException, ClassNotFoundException{
-        connectDistributor();
-        out.writeObject("SERVER#CONNECT#"+address+";"+port);//Concatena as informações e as envia para o servidor
-        in = new ObjectInputStream(server.getInputStream());//recebe informação advinda do servidor
-        String s = (String) in.readObject();//"quebra" a informação do servidor
+        connect();
+        //Concatena todas as infomações numa String e a transforma em uma cadeia de bytes
+        outUDP = ("SERVER#CONNECT#"+address+";"+port).getBytes();//Concatena as informações e as envia para o servidor
+        //Cria um pacote para envio ao servidor
+        DatagramPacket sendInfo = new DatagramPacket(outUDP, outUDP.length, addressDistributor, portDistributor);
+        serverUDP.send(sendInfo);//Envia o pacote ao servidor
+        sendInfo = new DatagramPacket(inUDP, inUDP.length);
+        serverUDP.receive(sendInfo);//Espera uma resposta
+        String s = new String(sendInfo.getData());//"quebra" a informação do servidor
         if(s!=null){
             String[] aux = s.split(";");
             addressServers = InetAddress.getByName(aux[0]);
-            portServers = Integer.parseInt(aux[1]);
-            s=getStorages();
+            String x = aux[1];
+            System.out.println("/"+x+"/");
+            portServers = Integer.parseInt(x);
             return "SUCCESS";
         }
-        disconnect();//Desconecta
         return "FAIL";
     }
 
     public String getStorages() throws IOException, ClassNotFoundException{
-        connectDistributor();
-        in = new ObjectInputStream(server.getInputStream());//recebe informação advinda do servidor
-        out.writeObject("SERVER#GETSTORAGES#");
-        String s = (String) in.readObject();
+        connect();//Concatena todas as infomações numa String e a transforma em uma cadeia de bytes
+        outUDP = ("SERVER#GETSTORAGES#"+address).getBytes();//Concatena as informações e as envia para o servidor
+        //Cria um pacote para envio ao servidor
+        DatagramPacket sendInfo = new DatagramPacket(outUDP, outUDP.length, addressDistributor, portDistributor);
+        serverUDP.send(sendInfo);//Envia o pacote ao servidor
+        sendInfo = new DatagramPacket(inUDP, inUDP.length);
+        serverUDP.receive(sendInfo);//Espera uma resposta
+        
+        String s = new String(sendInfo.getData());//"quebra" a informação do servidor
         if(s!=null){
             String aux[] = s.split(";");
             addressStorages = InetAddress.getByName(aux[0]);
@@ -86,23 +81,58 @@ public class ConnectionServer {
         }
         return s;
     }
+
+    public void registerClient(String user, String login, String passwd) throws IOException {
+        connect();//Concatena todas as infomações numa String e a transforma em uma cadeia de bytes
+        outUDP = ("SERVER#REGISTER#"+user+";"+login+";"+passwd).getBytes();//Concatena as informações e as envia para o servidor
+        //Cria um pacote para envio ao servidor
+        DatagramPacket sendInfo = new DatagramPacket(outUDP, outUDP.length, addressServers, portServers);
+        serverUDP.send(sendInfo);//Envia o pacote ao servidor
+    }
     
     public void serverDisconnect(String address, String port) throws IOException, ClassNotFoundException {
-        connectDistributor();
-        out.writeObject("SERVER#DISCONNECT#"+address+";"+port);//Concatena as informações e as envia para o servidor
-        in = new ObjectInputStream(server.getInputStream());//recebe informação advinda do servidor
-        String s = (String) in.readObject();//"quebra" a informação do servidor
-        disconnect();//Desconecta
+        connect();
+        outUDP = ("SERVER#DISCONNECT#"+address+";"+port).getBytes();//Concatena as informações e as envia para o servidor
+        //Cria um pacote para envio ao servidor
+        DatagramPacket sendInfo = new DatagramPacket(outUDP, outUDP.length, addressDistributor, portDistributor);
+        serverUDP.send(sendInfo);//Envia o pacote ao servidor
+        sendInfo = new DatagramPacket(inUDP, inUDP.length);
+        serverUDP.receive(sendInfo);//Espera uma resposta
+        
+        String s = new String(sendInfo.getData());//"quebra" a informação do servidor
     }
     
     public String getLog(int logSize) throws IOException, ClassNotFoundException {
-        connectServers();
-        out.writeObject("SERVER#GETLOG#"+logSize);
-        in = new ObjectInputStream(server.getInputStream());//recebe informação advinda do servidor
-        String s = (String) in.readObject();//"quebra" a informação do servidor
-        disconnect();//Desconecta
-        if(s!=null)
-            return "SUCCESS";
-        return "FAIL";
+        connect();
+        String s = ("SERVER#GETLOG#"+logSize+"#");//Concatena as informações e as envia para o servidor
+        //Cria um pacote para envio ao servidor
+        DatagramPacket sendDP = new DatagramPacket(s.getBytes(), s.getBytes().length, addressServers, portServers);
+        serverUDP.send(sendDP);
+        DatagramPacket receiveDP = new DatagramPacket(this.inUDP, this.inUDP.length);
+        serverUDP.setSoTimeout(3000);
+        int i =0;
+        s = null;
+        while(s==null && i<2){
+            try{            
+                serverUDP.receive(receiveDP);
+                s = new String(receiveDP.getData());
+                String aux[] = s.split("#");
+                if(aux[3].equals(address)){
+                    s=null;
+                }
+            }catch (SocketException | SocketTimeoutException ex){                
+            }
+            i++;
+        }
+        if(s==null){
+            return "Socket TimeOut";
+        }
+        System.out.println("recebeu");
+        return s;
+    }
+
+    public String sale(String[] prods) {
+        //Efetua a venda no depósito
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
