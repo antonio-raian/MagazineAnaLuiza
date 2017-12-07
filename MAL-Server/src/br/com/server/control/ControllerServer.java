@@ -52,8 +52,10 @@ public class ControllerServer {
     //Adiciona um novo produto, na lista de produtos
     public String newProduct(String cod, String name, String details, String producer, String kind, String quantiy, String value, String address){
         Product prod = findProduct(cod);
-        if(prod==null){
+        Store str = findStore(address);
+        if(prod==null&&str!=null){
             prod = new Product(cod, name, details, producer, kind, Integer.parseInt(quantiy), Double.parseDouble(value));
+            str.addProduct(prod);
             products.add(prod);
             return "SUCCESS";
         }else{
@@ -65,13 +67,16 @@ public class ControllerServer {
     //Atualiza as informações de um produto
     public String updateProduct(String cod, String name, String details, String producer, String kind, String quantiy, String value, String address) {
         Product prod = findProduct(cod);
-        if(prod!=null){
+        Store str = findStore(address);
+        if(prod!=null&&str!=null){
+            str.removeProduct(prod);
             prod.setName(name);
             prod.setDetails(details);
             prod.setProducer(producer);
             prod.setKind(kind);
             prod.setQuantity(Integer.parseInt(quantiy));
             prod.setValue(Double.parseDouble(value));
+            str.addProduct(prod);
             return "SUCCESS";
         }
         return "FAIL";
@@ -165,12 +170,12 @@ public class ControllerServer {
         return list;
     }
     //Método que armazena as informações da memoria Ram em arquivos da memória rom
-    private void saveData(String name, String data) throws IOException{
+    private void saveData(String name, String data, boolean overlap) throws IOException{
         File arq = new File(path,name);
         if(!arq.exists()){
             arq.createNewFile();
         }
-        BufferedWriter buffWrite = new BufferedWriter(new FileWriter(arq,true));        
+        BufferedWriter buffWrite = new BufferedWriter(new FileWriter(arq,overlap));        
         buffWrite.append(data+"\n");
         buffWrite.close();
     }
@@ -195,7 +200,7 @@ public class ControllerServer {
         path.mkdir();
         File[] files = path.listFiles();
         for(File f:files){
-            if(f.getName().contains("Products")){
+            if(f.getName().contains("Products_")){
                 list = readFile(f, 0);
                 for(Object o:list){
                     if(o instanceof Product){
@@ -217,7 +222,7 @@ public class ControllerServer {
     public void saveLog(String mensage) throws IOException{    
         String str = (log.size()+1)+"!"+mensage+"§";
         log.add(str);
-        saveData(fileNameLog, str);
+        saveData(fileNameLog, str, true);
     }
     //metodo que retorna o tamanho do log
     public int getLogSize(){
@@ -288,7 +293,7 @@ public class ControllerServer {
         if(user==null){
             user = new User(userName, login, passwd);
             users.add(user);
-            saveData("Users.txt", user.toString());
+            saveData("Users.txt", user.toString(), true);
             return user.toString();
         }
         return null;
@@ -346,5 +351,11 @@ public class ControllerServer {
         saveList(fileNameLog, log);
         saveList("Depositos.txt", storages);
         saveList("Users.txt", users);
+        for(Store s: storages){
+            saveData("Products_"+s.getAddress()+".txt", s.getAddress()+":"+s.getCoordinateX()+":"+s.getCoordinateY(),false);
+            for(Product p:s.getProducts()){
+                saveData("Products_"+s.getAddress()+".txt", p.toString(),true);
+            }
+        }
     }
 }

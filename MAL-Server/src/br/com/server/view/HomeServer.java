@@ -11,7 +11,6 @@ import br.com.server.connection.ServerUDP;
 import br.com.server.control.ControllerServer;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.nio.channels.ClosedByInterruptException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -216,7 +215,7 @@ public class HomeServer extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Servidor Conectado!");
                 s = "Socket TimeOut";
                 int i =0;
-                while (s.equals("Socket TimeOut")&&i<3){
+                while (s.equals("Socket TimeOut")&&i<2){
                     s = connection.getLog(ctrl.getLogSize());
                     i++;
                 }
@@ -226,7 +225,7 @@ public class HomeServer extends javax.swing.JFrame {
                 lbConnection.setText(address+":"+txtPortServer.getText());//muda informação da tela para IP e porta de conexão
             }
             stcp = new ServerTCP(Integer.parseInt(txtPortServer.getText()), ctrl, connection);
-            sudp = new ServerUDP(ctrl);
+            sudp = new ServerUDP(ctrl, connection);
         } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Não foi possível conectar-se ao servidor "+ex.getMessage());
         }

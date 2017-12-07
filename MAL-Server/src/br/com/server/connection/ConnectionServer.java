@@ -117,7 +117,7 @@ public class ConnectionServer {
                 serverUDP.receive(receiveDP);
                 s = new String(receiveDP.getData());
                 String aux[] = s.split("#");
-                if(aux[3].equals(address)){
+                if(aux[1].equals(address)){
                     s=null;
                 }
             }catch (SocketException | SocketTimeoutException ex){                

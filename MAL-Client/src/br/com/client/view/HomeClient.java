@@ -27,6 +27,7 @@ public class HomeClient extends javax.swing.JFrame {
      */
     public HomeClient() {
         initComponents();
+        connection = new ConnectionClient();
         lbStatus.setText("DESCONECTADO");
         btnAddCart.setEnabled(false);
         btnCarrinho.setEnabled(false);

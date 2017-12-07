@@ -21,14 +21,16 @@ public class ServerUDP implements Runnable{
     private final MulticastSocket server; //atributo responsável por estabelecer a conexão UDP
     private final byte[] receive = new byte[2048];//Array para receber a informação da conexão
     private final ControllerServer ctrl; //Atributo que recebe o controlador
+    private final ConnectionServer connection;
     private final int port = 8090;
     private final String ipGroup = "235.2.2.2";
 
     //Construtor 
-    public ServerUDP(ControllerServer ctrl) throws SocketException, IOException {
+    public ServerUDP(ControllerServer ctrl, ConnectionServer connection) throws SocketException, IOException {
         server = new MulticastSocket(this.port);//Abre uma coneão UDP para uma determinada porta
         server.joinGroup(InetAddress.getByName(ipGroup));
         this.ctrl = ctrl;
+        this.connection = connection;
         System.out.println("UDP: Ouvindo a porta "+port);
         new Thread(this).start();//Criando e iniciando a thread principal
     }
@@ -42,7 +44,7 @@ public class ServerUDP implements Runnable{
                 server.receive(p);//Espera a conexão
                 String s = new String(p.getData());
                 System.out.println(s);
-                //new AtividadeServidorPrincipal(server, p, ctrl).start();//Cria uma thread do tipo AtividadeServidor que irá tratar as informações recebidas do cliente
+                new ActionsServer(server, p, ctrl,connection).start();//Cria uma thread do tipo AtividadeServidor que irá tratar as informações recebidas do cliente
                 System.out.println("Cliente UDP conectado!");
             } catch (IOException ex) {
                 System.out.println("Pacote não recebido!");

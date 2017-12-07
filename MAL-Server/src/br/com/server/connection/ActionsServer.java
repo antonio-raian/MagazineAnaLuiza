@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -121,12 +122,8 @@ public class ActionsServer extends Thread{
 
     private void newProduct(String data, String address) throws IOException {
         String[] aux = data.split(";");
-        String s = ctrl.newProduct(aux[0],aux[1],aux[2],aux[3],aux[4],aux[5],aux[6],address);
-        out = new ObjectOutputStream(clientTCP.getOutputStream());
-        out.writeObject(s);
+        ctrl.newProduct(aux[0],aux[1],aux[2],aux[3],aux[4],aux[5],aux[6],address);
         ctrl.saveLog(str);
-        out.flush();
-        out.close();
     }
 
     private void updateProduct(String data, String address) throws IOException {
@@ -175,12 +172,10 @@ public class ActionsServer extends Thread{
     }
 
     private void getLog(String last) throws IOException {
-        String s = ctrl.getLog(Integer.parseInt(last));
-        out = new ObjectOutputStream(clientTCP.getOutputStream());
-        out.writeObject(s);
+        String s = ctrl.getLog(Integer.parseInt(last))+"#"+InetAddress.getLocalHost().getHostAddress();
+        DatagramPacket send = new DatagramPacket(s.getBytes(), s.getBytes().length,inUDP.getAddress(), inUDP.getPort());
+        clientUDP.send(send);
         ctrl.saveLog(str);
-        out.flush();
-        out.close();
     }
 
     private void buy(String data) throws IOException {

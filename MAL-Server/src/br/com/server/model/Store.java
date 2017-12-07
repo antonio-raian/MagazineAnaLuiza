@@ -65,4 +65,9 @@ public class Store {
     public void removeProduct(Product p){
         this.products.remove(p);
     }
+
+    @Override
+    public String toString() {
+        return address+";"+coordinateX+";"+coordinateY;
+    }
 }
